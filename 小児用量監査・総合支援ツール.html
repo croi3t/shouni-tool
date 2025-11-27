@@ -17,7 +17,7 @@
         .tab-nav li:hover { color: #fff; background: #3e5871; }
         .tab-nav li.active { color: #fff; border-bottom-color: var(--accent); background: #2c3e50; }
 
-        /* コンコンテンツエリア */
+        /* コンテンツエリア */
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
         .tab-content { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
@@ -26,7 +26,7 @@
         /* ■■ 監査ツール用スタイル ■■ */
         .panel { background: #eef2f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dce4ec; }
         .row { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 200px; }
+        .col { flex: 1; min-width: 300px; /* ★修正: 幅を確保して重なり防止 */ }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
         
@@ -53,18 +53,26 @@
         /* ■■ 資料・知識タブ用スタイル ■■ */
         h2 { border-left: 5px solid var(--accent); padding-left: 10px; color: var(--primary); margin-top: 30px; }
         .chart-container { width: 100%; height: 350px; position: relative; margin-bottom: 20px; border:1px solid #eee; }
-        .formula-box { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        .formula-box { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 15px; height: 100%; /* 高さ揃え */ }
         .formula-title { font-weight: bold; color: var(--accent); margin-bottom: 5px; }
         .formula-math { font-family: "Times New Roman", serif; font-size: 1.2rem; background: #eee; padding: 10px; text-align: center; border-radius: 4px; margin: 10px 0; }
         
-        /* スクロール可能なテーブルコンテナ */
+        /* ★修正: テーブルスタイルを分離してバグ修正 */
+        table.common-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top:10px; }
+        table.common-table th, table.common-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; }
+        table.common-table th { background: #f2f2f2; color:var(--primary); font-weight:bold; }
+        table.common-table tr:nth-child(even) td { background: #fafafa; }
+
+        /* 成長曲線テーブル専用（横スクロール・固定幅あり） */
         #growthTableContainer { overflow-x: auto; margin-bottom: 30px; }
-        table.ref-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top:10px; min-width: 600px; }
-        table.ref-table th, table.ref-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; white-space: nowrap; }
-        table.ref-table th { background: #f2f2f2; color:var(--primary); font-weight:bold; }
-        /* 1列目（項目名）を少し強調 */
-        table.ref-table th:first-child, table.ref-table td:first-child { background: #eef2f5; font-weight:bold; width: 100px; position: sticky; left: 0; z-index: 10; }
-        table.ref-table tr:nth-child(even) td:not(:first-child) { background: #fafafa; }
+        #growthTableContainer table { min-width: 600px; }
+        #growthTableContainer th:first-child, #growthTableContainer td:first-child { 
+            background: #eef2f5; font-weight:bold; width: 80px; position: sticky; left: 0; z-index: 10; border-right: 2px solid #ddd; 
+        }
+
+        /* Von Harnackテーブル専用（幅100%・スクロールなし） */
+        .harnack-table th { text-align: left; padding-left: 15px; }
+        .harnack-table td { text-align: left; padding-left: 15px; }
 
         /* ■■ データ設定タブ用スタイル ■■ */
         .btn-save { background: var(--success); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
@@ -149,7 +157,7 @@
 
         <h2>🧮 小児薬用量換算式</h2>
         
-        <div class="formula-box">
+        <div class="formula-box" style="margin-bottom:20px;">
             <div class="formula-title">Augsberger（アウグスバーガー）式 II</div>
             <div>体重から小児量を算出する際によく用いられる式です（主に1歳以上）。</div>
             <div class="formula-math">小児量 = 成人量 × ( 体重[kg] × 4 + 20 ) / 100</div>
@@ -165,24 +173,29 @@
         <div class="row">
             <div class="col">
                 <div class="formula-box">
-                    <div class="formula-title">Von Harnack（ハルナック）表</div>
-                    <table class="ref-table">
-                        <tr><th>年齢</th><th>成人量比</th></tr>
-                        <tr><td>新生児</td><td>1/10 - 1/8</td></tr>
-                        <tr><td>乳児 (1歳)</td><td>1/6 - 1/5</td></tr>
-                        <tr><td>幼児 (3歳)</td><td>1/4</td></tr>
-                        <tr><td>幼児 (6歳)</td><td>1/3</td></tr>
-                        <tr><td>学童 (9歳)</td><td>1/2</td></tr>
-                        <tr><td>学童 (12歳)</td><td>2/3</td></tr>
+                    <div class="formula-title">Von Harnack（ハルナック）の表</div>
+                    <div style="font-size:0.9rem; color:#666; margin-bottom:5px;">年齢・月齢から成人量に対する比率を算出</div>
+                    <table class="common-table harnack-table">
+                        <tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr>
+                        <tr><th>新生児 (～1ヶ月)</th><td>1/10 ～ 1/8</td></tr>
+                        <tr><th>乳児 (～6ヶ月)</th><td>1/8 ～ 1/6</td></tr>
+                        <tr><th>乳児 (6～12ヶ月)</th><td>1/6 ～ 1/5</td></tr>
+                        <tr><th>幼児 (1～3歳)</th><td>1/5 ～ 1/4</td></tr>
+                        <tr><th>幼児 (3～7.5歳)</th><td>1/4 ～ 1/3</td></tr>
+                        <tr><th>学童 (7.5～12歳)</th><td>1/3 ～ 1/2</td></tr>
+                        <tr><th>学童 (12歳～)</th><td>1/2 ～ 3/4</td></tr>
                     </table>
                 </div>
             </div>
+            
             <div class="col">
                 <div class="formula-box">
                     <div class="formula-title">Young（ヤング）式</div>
                     <div style="font-size:0.9rem;">年齢から算出（体重情報がない場合など）</div>
                     <div class="formula-math">成人量 × 年齢 / ( 年齢 + 12 )</div>
-                    <hr style="border:0; border-top:1px solid #ddd; margin:10px 0;">
+                    
+                    <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
+                    
                     <div class="formula-title">Crawford（クロフォード）式</div>
                     <div style="font-size:0.9rem;">体表面積から算出（抗癌剤など）</div>
                     <div class="formula-math">成人量 × 体表面積(m²) / 1.73</div>
@@ -217,7 +230,7 @@
     // --- 1. グローバル変数 & 初期データ ---
     let dbDrugs = [];
     
-    // 成長曲線・テーブル用データ (年齢: [男子体重, 女子体重])
+    // 成長曲線・テーブル用データ
     const growthData = {
         boy:  [[0,3.0],[1,9.6],[2,12.5],[3,14.6],[4,16.7],[5,18.9],[6,21.4],[7,24.1],[8,27.2],[9,30.6],[10,34.2],[11,38.2],[12,42.5]],
         girl: [[0,3.0],[1,8.9],[2,11.8],[3,14.0],[4,16.2],[5,18.5],[6,20.9],[7,23.6],[8,26.5],[9,30.0],[10,33.8],[11,38.0],[12,42.0]]
@@ -226,10 +239,10 @@
     // 参考文献リスト
     const dbRefs = {
         1: { title: "添付文書", url: "" },
-        2: { title: "新小児薬量量　改訂第10版", url: "" },
+        2: { title: "新小児薬用量　改訂第10版", url: "" },
         3: { title: "先天性心疾患並びに小児期心疾患の診断検査と薬物療法ガイドライン（2018年改訂版）", url: "https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf" },
         4: { title: "小児結核診療のてびき(改訂第3版)", url: "https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf" },
-        5: { title: "Official American Thoracic Society/CDC/IDSA Clinical Practice Guidelines: Treatment of Drug-Susceptible Tuberculosis", url: "https://academic.oup.com/cid/article/63/7/e147/2196792" },
+        5: { title: "Official American Thoracic Society/CDC/IDSA Clinical Practice Guidelines", url: "https://academic.oup.com/cid/article/63/7/e147/2196792" },
         6: { title: "新生児マススクリーニングガイド対象疾患等診療ガイドラインPart2", url: "https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf" },
         7: { title: "マクロライド系抗生物質の新しい展開 臨床と微生物 vol.27 No.6", url: "https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif" },
         8: { title: "今日の治療指針2025＞膀胱尿管逆流", url: "" },
@@ -261,14 +274,10 @@
 
     // --- 2. 起動時処理 ---
     window.onload = function() {
-        // ローカルストレージからデータ読み込み
         const savedData = localStorage.getItem('pediatric_drug_db');
         if (savedData) {
             dbDrugs = JSON.parse(savedData);
-            console.log("Loaded from Storage:", dbDrugs.length);
         }
-        
-        // グラフとテーブル描画
         drawGrowthChart('chartGirl', 'girl');
         drawGrowthChart('chartBoy', 'boy');
         drawGrowthTable();
@@ -410,7 +419,7 @@
         }
     }
 
-    // --- 5. データ保存 (強力版コンバーター内蔵) ---
+    // --- 5. データ保存 (改行対応コンバーター) ---
     function saveData() {
         const raw = document.getElementById('pasteArea').value;
         if (!raw.trim()) { alert("データを貼り付けてください"); return; }
@@ -418,7 +427,6 @@
         const rows = [];
         let currentRow = [], currentCell = "", inQuote = false;
         
-        // 改行コード込みパーサー
         for (let i = 0; i < raw.length; i++) {
             const char = raw[i], nextChar = raw[i+1];
             if (inQuote) {
@@ -455,11 +463,10 @@
             });
         });
 
-        // 保存
         localStorage.setItem('pediatric_drug_db', JSON.stringify(result));
         dbDrugs = result;
         document.getElementById('saveStatus').innerHTML = `✅ ${result.length}件のデータを保存・更新しました！`;
-        alert("保存しました。監査タブで検索可能です。");
+        alert("保存しました。");
     }
 
     function resetData() {
@@ -471,7 +478,7 @@
         }
     }
 
-    // --- 6. 知識ツールロジック ---
+    // --- 6. 資料・知識ツール ---
     function calcAugsberger() {
         const ad = parseFloat(document.getElementById('augAdult').value);
         const wt = parseFloat(document.getElementById('augWeight').value);
@@ -481,7 +488,6 @@
         }
     }
 
-    // --- 7. SVGグラフ & テーブル描画 ---
     function drawGrowthChart(containerId, type) {
         const w = 400, h = 300, pad = 40;
         const svgNS = "http://www.w3.org/2000/svg";
@@ -517,14 +523,11 @@
             svg.appendChild(txt);
         }
         
-        // グラフ線
         let d = `M`;
         data.forEach((p, i) => {
             const x = pad + (p[0]/12)*(w-pad*2);
             const y = (h-pad) - (p[1]/50)*(h-pad*2);
             d += `${i===0?'':','}${x} ${y}`;
-            
-            // データ点
             const circle = document.createElementNS(svgNS, "circle");
             circle.setAttribute("cx", x); circle.setAttribute("cy", y); circle.setAttribute("r", 3);
             circle.setAttribute("fill", type==='boy'?'#3498db':'#e74c3c');
@@ -541,11 +544,10 @@
         document.getElementById(containerId).appendChild(svg);
     }
 
-    // --- 改良版：横長テーブル描画関数 ---
     function drawGrowthTable() {
         const container = document.getElementById('growthTableContainer');
         // ヘッダー行 (年齢)
-        let html = '<table class="ref-table"><thead><tr><th>年齢 (歳)</th>';
+        let html = '<table class="common-table"><thead><tr><th>年齢 (歳)</th>';
         growthData.boy.forEach(pt => {
             html += `<th>${pt[0]}</th>`;
         });
