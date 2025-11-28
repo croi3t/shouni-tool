@@ -1,5 +1,14 @@
 [
   {
+    "name": "商品名",
+    "generic": "一般名",
+    "yomi": "よみがな",
+    "text": "用法・用量（小児）",
+    "rule": null,
+    "ageRule": null,
+    "refs": []
+  },
+  {
     "name": "アイピーディ DS",
     "generic": "スプラタスト",
     "yomi": "あいぴーでぃ　すぷらたすと",
