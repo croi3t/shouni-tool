@@ -1,14 +1,5 @@
 [
   {
-    "name": "商品名",
-    "generic": "一般名",
-    "yomi": "よみがな",
-    "text": "用法・用量（小児）",
-    "rule": null,
-    "ageRule": null,
-    "refs": []
-  },
-  {
     "name": "アイピーディ DS",
     "generic": "スプラタスト",
     "yomi": "あいぴーでぃ　すぷらたすと",
@@ -1727,41 +1718,7 @@
       "unit": 0,
       "limitDay": 120
     },
-    "ageRule": {
-      "list": [
-        {
-          "start": 0,
-          "end": 0.5,
-          "dose": 4
-        },
-        {
-          "start": 0.5,
-          "end": 1,
-          "dose": 12
-        },
-        {
-          "start": 1,
-          "end": 3,
-          "dose": 14
-        },
-        {
-          "start": 3,
-          "end": 7.5,
-          "dose": 20
-        },
-        {
-          "start": 7.5,
-          "end": 12,
-          "dose": 30
-        },
-        {
-          "start": 12,
-          "end": 15,
-          "dose": 40
-        }
-      ],
-      "unit": 0
-    },
+    "ageRule": null,
     "refs": [
       2,
       18,
