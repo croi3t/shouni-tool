@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小児用量監査ツール V7 (シナリオ対応版)</title>
+    <title>小児用量監査ツール V8 (安全性強化版)</title>
     <style>
         /* --- 基本設定 --- */
         :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; }
         body { font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
-        
-        /* ヘッダー */
         header { background: var(--primary); color: #fff; padding: 15px 0; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.4rem; }
         
-        /* タブナビゲーション */
+        /* タブ */
         .tab-nav { display: flex; justify-content: center; background: #34495e; padding: 0; list-style: none; margin: 0; }
         .tab-nav li { cursor: pointer; padding: 12px 20px; color: #bdc3c7; transition: 0.3s; border-bottom: 4px solid transparent; font-weight: bold; font-size: 0.95rem; }
         .tab-nav li:hover { color: #fff; background: #3e5871; }
@@ -25,13 +23,21 @@
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 監査ツール用 --- */
+        /* 監査ツール */
         .panel { background: #eef2f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dce4ec; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 180px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); font-size: 0.95rem; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; transition: all 0.3s; }
         input:disabled { background: #e9ecef; }
+        
+        /* 年齢入力誘導用のアニメーション */
+        @keyframes alertPulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); border-color: #e74c3c; }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); border-color: #e74c3c; }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); border-color: #e74c3c; }
+        }
+        .input-alert { animation: alertPulse 1.5s infinite; background-color: #fff5f5; }
 
         /* 検索リスト */
         .search-container { position: relative; }
@@ -39,11 +45,15 @@
         #drugList li { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 16px; }
         #drugList li:hover { background: #e6f7ff; color: var(--accent); }
 
-        /* シナリオ選択エリア (V7) */
-        .scenario-selector { margin-bottom: 20px; background: #fff8e1; padding: 15px; border: 1px solid #ffe082; border-radius: 6px; animation: fadeIn 0.3s; }
+        /* シナリオ選択 */
+        .scenario-selector { margin-bottom: 20px; background: #fff8e1; padding: 15px; border: 1px solid #ffe082; border-radius: 6px; }
         .scenario-title { font-weight: bold; color: #f39c12; margin-bottom: 10px; display: block; }
         .scenario-opt { display: block; margin-bottom: 8px; cursor: pointer; font-weight: bold; font-size: 0.95rem; }
-        .scenario-opt input { width: auto; margin-right: 8px; transform: scale(1.2); }
+
+        /* ★V8新設: 警告メッセージエリア */
+        #safetyAlertArea { display: none; margin-bottom: 20px; padding: 15px; border-radius: 6px; border-left: 6px solid; font-weight: bold; line-height: 1.5; }
+        .safety-danger { background: #fee; border-color: #c0392b; color: #c0392b; }
+        .safety-warning { background: #fff3cd; border-color: #f39c12; color: #856404; }
 
         /* 結果カード */
         #resultCard { display: none; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff; margin-top: 20px; }
@@ -55,38 +65,26 @@
         .audit-danger { background: #fbe9e7; border-left-color: var(--danger); color: #b71c1c; }
         .audit-check { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
 
-        .original-text { 
-            background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; 
-            font-size: 1rem; color: #444; line-height: 1.8; font-family: inherit;
-            white-space: pre-wrap; word-wrap: break-word; word-break: break-all;
-        }
+        .original-text { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; color: #444; line-height: 1.8; font-family: inherit; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; }
         .dose-label { font-size: 0.9rem; background: #fff; padding: 4px 10px; border-radius: 15px; color: var(--primary); font-weight: bold; }
-        
         .ref-links a { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: var(--accent); text-decoration: none; background: #f0f8ff; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
-        .ref-links a:hover { background: var(--accent); color: #fff; }
         .ref-nolink { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: #666; background: #f5f5f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.9rem; }
 
-        /* --- 資料・知識用 --- */
+        /* 資料・設定タブ */
         h2 { border-left: 5px solid var(--accent); padding-left: 10px; color: var(--primary); margin-top: 30px; font-size: 1.3rem; }
         .chart-container { width: 100%; height: 350px; position: relative; margin-bottom: 20px; border: 1px solid #eee; }
         .formula-box { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 15px; height: 100%; }
         .formula-title { font-weight: bold; color: var(--accent); margin-bottom: 5px; }
         .formula-math { font-family: "Times New Roman", serif; font-size: 1.2rem; background: #eee; padding: 10px; text-align: center; border-radius: 4px; margin: 10px 0; }
-        
         table.common-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 10px; }
         table.common-table th, table.common-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; }
         table.common-table th { background: #f2f2f2; color: var(--primary); font-weight: bold; }
         table.common-table tr:nth-child(even) td { background: #fafafa; }
-
         #growthTableContainer { overflow-x: auto; margin-bottom: 30px; }
         #growthTableContainer table { min-width: 600px; }
-        #growthTableContainer th:first-child, #growthTableContainer td:first-child { 
-            background: #eef2f5; font-weight: bold; width: 80px; position: sticky; left: 0; z-index: 10; border-right: 2px solid #ddd; 
-        }
+        #growthTableContainer th:first-child, #growthTableContainer td:first-child { background: #eef2f5; font-weight: bold; width: 80px; position: sticky; left: 0; z-index: 10; border-right: 2px solid #ddd; }
         .harnack-table th { text-align: left; padding-left: 15px; width: 40%; }
         .harnack-table td { text-align: left; padding-left: 15px; }
-
-        /* --- 設定タブ用 --- */
         .btn-action { color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .btn-action:hover { opacity: 0.9; }
         .data-status { margin-top: 15px; font-weight: bold; text-align: center; color: var(--primary); }
@@ -94,16 +92,13 @@
     </style>
     
     <script>
-        // タブシステム (最優先読み込み)
         function switchTab(id) {
             try {
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
                 document.querySelectorAll('.tab-nav li').forEach(e => e.classList.remove('active'));
-                const target = document.getElementById(id);
-                if(target) target.classList.add('active');
+                const target = document.getElementById(id); if(target) target.classList.add('active');
                 const idx = {'tab-calc':0, 'tab-knowledge':1, 'tab-settings':2}[id];
-                const navItems = document.querySelectorAll('.tab-nav li');
-                if(navItems[idx]) navItems[idx].classList.add('active');
+                const navItems = document.querySelectorAll('.tab-nav li'); if(navItems[idx]) navItems[idx].classList.add('active');
             } catch(e) { console.error("Tab Error:", e); }
         }
         window.onerror = function(msg, url, line) {
@@ -115,7 +110,7 @@
 <body>
 
 <header>
-    <h1>💊 小児用量監査ツール V7</h1>
+    <h1>💊 小児用量監査ツール V8</h1>
 </header>
 
 <div id="errorBanner"></div>
@@ -129,11 +124,14 @@
 <div class="container">
     <div id="tab-calc" class="tab-content active">
         <div id="loadingStatus" style="text-align:center; padding:10px; color:#666; font-size:0.9rem;">⏳ 準備中...</div>
+        
+        <div id="safetyAlertArea"></div>
+
         <div class="panel">
             <div class="row">
                 <div class="col search-container" style="flex: 2; min-width: 100%;">
                     <label>薬剤検索</label>
-                    <input type="text" id="searchBox" placeholder="例：タミフル、デカドロン..." autocomplete="off">
+                    <input type="text" id="searchBox" placeholder="例：タミフル、ミノサイクリン..." autocomplete="off">
                     <ul id="drugList"></ul>
                 </div>
             </div>
@@ -206,7 +204,7 @@
 </div>
 
 <script>
-    // ■■■ ユーザー定義エリア: 特別ルール ■■■
+    // ■■■ ユーザー定義エリア: 特別ルール・シナリオ ■■■
     const specialDrugRules = {
         "タミフル": [
             { label: "治療 (1歳未満): 6mg/kg/日", rule: { min:6, max:6, unit:0 } },
@@ -230,46 +228,22 @@
         ]
     };
 
+    // ■■■ V8新設: 要注意薬剤リスト (部分一致で判定) ■■■
+    const drugWarnings = [
+        { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・エナメル質形成不全、骨発育不全のリスクがあります。<br>他剤が無効または使用できない場合にのみ適用を考慮してください。" },
+        { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満 (水痘・インフルエンザ)】ライ症候群の発症リスクがあるため原則禁忌です。" },
+        { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制のリスクがあります。" },
+        { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制のリスクがあります。" },
+        { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害のリスクがあります。有益性が上回る場合のみ投与してください。" },
+        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害のリスクがあります。有益性が上回る場合のみ投与してください。" }
+    ];
+
     let dbDrugs = [];
     let currentRule = null;
+    let currentWarning = null; // 現在表示中の警告
 
-    // --- 参考文献データ ---
-    const dbRefs = {
-        1: { title: "添付文書", url: "" },
-        2: { title: "新小児薬量量　改訂第10版", url: "" },
-        3: { title: "先天性心疾患ガイドライン(2018)", url: "https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf" },
-        4: { title: "小児結核診療のてびき", url: "https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf" },
-        5: { title: "Official American Thoracic Society/CDC/IDSA Clinical Practice Guidelines", url: "https://academic.oup.com/cid/article/63/7/e147/2196792" },
-        6: { title: "新生児マススクリーニングガイド", url: "https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf" },
-        7: { title: "マクロライド系抗生物質の新しい展開", url: "https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif" },
-        8: { title: "今日の治療指針2025＞膀胱尿管逆流", url: "" },
-        9: { title: "Medspace", url: "https://reference.medscape.com/drug/valium-valtoco-diazepam-342902" },
-        10: { title: "未承認薬・適応外薬の要望", url: "https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf" },
-        11: { title: "JAID/JSC 感染症治療ガイドライン", url: "https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf" },
-        12: { title: "小児気管支喘息治療・管理ガイドライン", url: "" },
-        13: { title: "UpToDate 急性喘息増悪", url: "https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management" },
-        14: { title: "UpToDate 先天性副腎過形成", url: "https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment" },
-        15: { title: "軽症胃腸炎関連けいれんに対するcarbamazepine", url: "https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja" },
-        16: { title: "今日の小児治療指針17版>VitD欠乏", url: "" },
-        17: { title: "今日の小児治療指針17版>新生児低Ca", url: "" },
-        18: { title: "今日の小児治療指針17版>急性下痢", url: "" },
-        19: { title: "新生児診療マニュアル", url: "" },
-        20: { title: "周産期医学 50 (増刊) 2020", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j" },
-        21: { title: "医師のみ閲覧可能マニュアル", url: "" },
-        22: { title: "小児心不全薬物治療ガイドライン", url: "https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html" },
-        23: { title: "今日の治療指針2024>便秘", url: "" },
-        24: { title: "今日の小児治療指針17版>ウイルス性胃腸炎", url: "" },
-        25: { title: "小児科ですぐに戦えるホコとタテ", url: "" },
-        26: { title: "乳児胃食道逆流 六君子湯", url: "https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja" },
-        27: { title: "今日の小児治療指針17版>胃食道逆流", url: "" },
-        28: { title: "周産期医学 50 (増刊) 458-462", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j" },
-        29: { title: "ツムラMEDICAL SITE", url: "https://medical.tsumura.co.jp/support/knowledge/20221104_2.html" },
-        30: { title: "公知申請への該当性に係る報告書", url: "https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf" },
-        31: { title: "新生児鉄剤投与ガイドライン", url: "http://jsnhd.or.jp/pdf/31-1-159-185.pdf" },
-        32: { title: "IWK Health Neonatal Guidelines", url: "https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo" }
-    };
+    const dbRefs = { 1: { title: "添付文書", url: "" }, 2: { title: "新小児薬量量", url: "" }, 3: { title: "先天性心疾患ガイドライン(2018)", url: "https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf" }, 4: { title: "小児結核診療のてびき", url: "https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf" }, 5: { title: "Official American Thoracic Society/CDC/IDSA", url: "https://academic.oup.com/cid/article/63/7/e147/2196792" }, 6: { title: "新生児マススクリーニングガイド", url: "https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf" }, 7: { title: "マクロライド系抗生物質の新しい展開", url: "https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif" }, 8: { title: "今日の治療指針2025＞膀胱尿管逆流", url: "" }, 9: { title: "Medspace", url: "https://reference.medscape.com/drug/valium-valtoco-diazepam-342902" }, 10: { title: "未承認薬・適応外薬の要望", url: "https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf" }, 11: { title: "JAID/JSC 感染症治療ガイドライン", url: "https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf" }, 12: { title: "小児気管支喘息治療・管理ガイドライン", url: "" }, 13: { title: "UpToDate 急性喘息増悪", url: "https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management" }, 14: { title: "UpToDate 先天性副腎過形成", url: "https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment" }, 15: { title: "軽症胃腸炎関連けいれんに対するcarbamazepine", url: "https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja" }, 16: { title: "今日の小児治療指針17版>VitD欠乏", url: "" }, 17: { title: "今日の小児治療指針17版>新生児低Ca", url: "" }, 18: { title: "今日の小児治療指針17版>急性下痢", url: "" }, 19: { title: "新生児診療マニュアル", url: "" }, 20: { title: "周産期医学 50 (増刊) 2020", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j" }, 21: { title: "医師のみ閲覧可能マニュアル", url: "" }, 22: { title: "小児心不全薬物治療ガイドライン", url: "https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html" }, 23: { title: "今日の治療指針2024>便秘", url: "" }, 24: { title: "今日の小児治療指針17版>ウイルス性胃腸炎", url: "" }, 25: { title: "小児科ですぐに戦えるホコとタテ", url: "" }, 26: { title: "乳児胃食道逆流 六君子湯", url: "https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja" }, 27: { title: "今日の小児治療指針17版>胃食道逆流", url: "" }, 28: { title: "周産期医学 50 (増刊) 458-462", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j" }, 29: { title: "ツムラMEDICAL SITE", url: "https://medical.tsumura.co.jp/support/knowledge/20221104_2.html" }, 30: { title: "公知申請への該当性に係る報告書", url: "https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf" }, 31: { title: "新生児鉄剤投与ガイドライン", url: "http://jsnhd.or.jp/pdf/31-1-159-185.pdf" }, 32: { title: "IWK Health Neonatal Guidelines", url: "https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo" } };
 
-    // --- 起動処理 ---
     window.onload = function() {
         try {
             drawGrowthChart('chartGirl', 'girl');
@@ -292,7 +266,14 @@
         } catch(e){ console.error("Init:", e); }
     };
 
-    // --- 監査ロジック ---
+    function switchTab(id){
+        document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+        document.querySelectorAll('.tab-nav li').forEach(e=>e.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        const idx={'tab-calc':0,'tab-knowledge':1,'tab-settings':2}[id];
+        document.querySelectorAll('.tab-nav li')[idx].classList.add('active');
+    }
+
     const searchBox = document.getElementById('searchBox');
     const drugList = document.getElementById('drugList');
     
@@ -301,9 +282,7 @@
         if (!val) { drugList.style.display = 'none'; return; }
         drugList.innerHTML = '';
         const hits = dbDrugs.filter(d => 
-            (d.name && d.name.toLowerCase().includes(val)) || 
-            (d.generic && d.generic.toLowerCase().includes(val)) || 
-            (d.yomi && d.yomi.replace(/\s+/g, '').includes(val))
+            (d.name && d.name.toLowerCase().includes(val)) || (d.generic && d.generic.toLowerCase().includes(val)) || (d.yomi && d.yomi.replace(/\s+/g, '').includes(val))
         );
         if (hits.length > 0) {
             drugList.style.display = 'block';
@@ -325,7 +304,28 @@
         document.getElementById('resGeneric').textContent = drug.generic;
         document.getElementById('resPedsText').textContent = drug.text;
 
-        // V7: シナリオ判定
+        // V8: 警告チェック
+        currentWarning = null;
+        const alertArea = document.getElementById('safetyAlertArea');
+        alertArea.style.display = "none";
+        
+        for (const w of drugWarnings) {
+            if (drug.name.includes(w.key) || drug.generic.includes(w.key)) {
+                currentWarning = w;
+                alertArea.innerHTML = w.msg;
+                alertArea.className = "safety-warning"; // 初期は黄色
+                alertArea.style.display = "block";
+                
+                // 年齢入力を促す
+                document.getElementById('age').classList.add('input-alert');
+                break; 
+            }
+        }
+        if(!currentWarning) {
+            document.getElementById('age').classList.remove('input-alert');
+        }
+
+        // シナリオ判定
         const scenarioDiv = document.getElementById('scenarioArea');
         const optsDiv = document.getElementById('scenarioOptions');
         optsDiv.innerHTML = '';
@@ -386,9 +386,26 @@
 
     function runAudit() {
         const resBox = document.getElementById('auditResult');
+        const alertArea = document.getElementById('safetyAlertArea');
         const weight = parseFloat(document.getElementById('weight').value);
         const age = parseFloat(document.getElementById('age').value);
         const inputDose = parseFloat(document.getElementById('doseInput').value);
+
+        // V8: 年齢警告の更新
+        if (currentWarning) {
+            if (!isNaN(age) && age < currentWarning.limitAge) {
+                alertArea.className = "safety-danger"; // 赤くする
+                document.getElementById('age').classList.remove('input-alert'); // 点滅解除
+            } else if (!isNaN(age)) {
+                alertArea.className = "safety-warning"; // 年齢OKなら黄色(注意喚起のみ)
+                document.getElementById('age').classList.remove('input-alert');
+            } else {
+                // 年齢未入力
+                document.getElementById('age').classList.add('input-alert');
+            }
+        } else {
+            document.getElementById('age').classList.remove('input-alert');
+        }
 
         if (!currentRule) return;
 
