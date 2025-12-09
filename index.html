@@ -3,61 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小児用量監査ツール V10.1</title>
+    <title>小児用量監査ツール V20</title>
     <style>
         /* --- 基本設定 --- */
-        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; }
+        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; --inj-color: #8e44ad; }
         body { font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
         header { background: var(--primary); color: #fff; padding: 15px 0; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.4rem; }
-        .tab-nav { display: flex; justify-content: center; background: #34495e; padding: 0; list-style: none; margin: 0; }
-        .tab-nav li { cursor: pointer; padding: 12px 20px; color: #bdc3c7; transition: 0.3s; border-bottom: 4px solid transparent; font-weight: bold; font-size: 0.95rem; }
+        
+        /* タブ */
+        .tab-nav { display: flex; justify-content: center; background: #34495e; padding: 0; list-style: none; margin: 0; flex-wrap: wrap; }
+        .tab-nav li { cursor: pointer; padding: 12px 15px; color: #bdc3c7; transition: 0.3s; border-bottom: 4px solid transparent; font-weight: bold; font-size: 0.9rem; }
         .tab-nav li:hover { color: #fff; background: #3e5871; }
         .tab-nav li.active { color: #fff; border-bottom-color: var(--accent); background: #2c3e50; }
+        .tab-nav li[data-tab="tab-inj"].active { border-bottom-color: var(--inj-color); }
+
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
         .tab-content { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        /* 監査ツール */
+
+        /* パネル・入力 */
         .panel { background: #eef2f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dce4ec; }
+        .inj-mode .panel { background: #f3e5f5; border-color: #e1bee7; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 180px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); font-size: 0.95rem; }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; transition: all 0.3s; }
         input:disabled { background: #e9ecef; }
-        @keyframes alertPulse { 0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.7); border-color: #e74c3c; } 70% { box-shadow: 0 0 0 10px rgba(231,76,60,0); border-color: #e74c3c; } 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); border-color: #e74c3c; } }
-        .input-alert { animation: alertPulse 1.5s infinite; background-color: #fff5f5; }
+        
+        /* 検索リスト */
         .search-container { position: relative; }
-        #drugList { list-style: none; padding: 0; margin: 0; position: absolute; width: 100%; max-height: 300px; overflow-y: auto; background: #fff; border: 1px solid #ddd; z-index: 100; display: none; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
-        #drugList li { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 16px; }
-        #drugList li:hover { background: #e6f7ff; color: var(--accent); }
+        .drug-list { list-style: none; padding: 0; margin: 0; position: absolute; width: 100%; max-height: 300px; overflow-y: auto; background: #fff; border: 1px solid #ddd; z-index: 100; display: none; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+        .drug-list li { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 16px; }
+        .drug-list li:hover { background: #e6f7ff; color: var(--accent); }
+
+        /* シナリオ選択ボタン */
         .scenario-selector { margin-bottom: 20px; background: #fff8e1; padding: 15px; border: 1px solid #ffe082; border-radius: 6px; }
         .scenario-title { font-weight: bold; color: #f39c12; margin-bottom: 10px; display: block; }
-        .scenario-opt { display: block; margin-bottom: 8px; cursor: pointer; font-weight: bold; font-size: 0.95rem; }
-        #safetyAlertArea { display: none; margin-bottom: 20px; padding: 15px; border-radius: 6px; border-left: 6px solid; font-weight: bold; line-height: 1.5; }
-        .safety-danger { background: #fee; border-color: #c0392b; color: #c0392b; }
-        .safety-warning { background: #fff3cd; border-color: #f39c12; color: #856404; }
-        #resultCard { display: none; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff; margin-top: 20px; }
+        .scenario-btn { 
+            display: inline-block; margin: 5px 5px 5px 0; padding: 10px 15px; 
+            background: #fff; border: 2px solid #f39c12; color: #f39c12; 
+            font-weight: bold; border-radius: 20px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+        }
+        .scenario-btn:hover { background: #fdf2d0; }
+        .scenario-btn.active { background: #f39c12; color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* 結果カード */
+        .result-card { display: none; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff; margin-top: 20px; }
         .card-header { background: var(--primary); color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .inj-mode .card-header { background: var(--inj-color); }
         .card-body { padding: 20px; }
-        .audit-box { padding: 20px; border-radius: 6px; border-left: 6px solid #ccc; background: #f9f9f9; margin-bottom: 25px; font-size: 1.1rem; }
+
+        /* 判定ボックス */
+        .audit-box { padding: 20px; border-radius: 6px; border-left: 6px solid #ccc; background: #f9f9f9; margin-bottom: 20px; font-size: 1.1rem; }
         .audit-safe { background: #e8f5e9; border-left-color: var(--success); color: #1b5e20; }
         .audit-danger { background: #fbe9e7; border-left-color: var(--danger); color: #b71c1c; }
         .audit-check { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
-        .detail-result { font-size: 0.95rem; margin-top: 10px; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 4px; }
-        .badge-mini { display: inline-block; padding: 2px 6px; font-size: 0.8rem; border-radius: 4px; color: white; margin-right: 5px; vertical-align: middle; }
-        .bg-green { background: var(--success); }
-        .bg-red { background: var(--danger); }
-        .bg-gray { background: #95a5a6; }
+        
+        /* 推奨量表示エリア (V19) */
+        .guideline-area { background: #eef2f5; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ddd; font-weight:bold; color:#2c3e50; }
+
         .original-text { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; color: #444; line-height: 1.8; font-family: inherit; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; }
-        .dose-label { font-size: 0.9rem; background: #fff; padding: 4px 10px; border-radius: 15px; color: var(--primary); font-weight: bold; }
+        
+        /* 強調表示 */
+        .unit-emph { font-weight: bold; }
+        .unit-dose { color: #d35400; }
+        .unit-day { color: #2980b9; }
+        input.input-dose { border: 2px solid #e67e22; background: #fdf2e9; }
+        input.input-day { border: 2px solid #3498db; background: #ebf5fb; }
+
+        /* その他 */
+        .liquid-switch { display:none; align-items:center; margin-top:5px; font-size:0.9rem; color:#2c3e50; font-weight:bold; }
+        .liquid-switch input { width:auto; margin-right:5px; transform:scale(1.2); }
         .ref-links a { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: var(--accent); text-decoration: none; background: #f0f8ff; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
         .ref-links a:hover { background: var(--accent); color: #fff; }
         .ref-nolink { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: #666; background: #f5f5f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.9rem; }
-        .liquid-switch { display:none; align-items:center; margin-top:5px; font-size:0.9rem; color:#2c3e50; font-weight:bold; }
-        .liquid-switch input { width:auto; margin-right:5px; transform:scale(1.2); }
-        .liquid-info { background:#e3f2fd; color:#0d47a1; padding:5px 10px; border-radius:4px; font-size:0.85rem; margin-top:5px; display:none; }
-        /* 資料・設定タブ */
+        
+        #safetyAlertArea { display: none; margin-bottom: 20px; padding: 15px; border-radius: 6px; border-left: 6px solid; font-weight: bold; line-height: 1.5; }
+        .safety-danger { background: #fee; border-color: #c0392b; color: #c0392b; }
+        .safety-warning { background: #fff3cd; border-color: #f39c12; color: #856404; }
+        .input-alert { animation: alertPulse 1.5s infinite; background-color: #fff5f5; }
+        @keyframes alertPulse { 0% { box-shadow: 0 0 0 0 rgba(231,76,60,0.7); border-color: #e74c3c; } 70% { box-shadow: 0 0 0 10px rgba(231,76,60,0); border-color: #e74c3c; } 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0); border-color: #e74c3c; } }
+        
+        .btn-action { color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-action:hover { opacity: 0.9; }
+        .data-status { margin-top: 15px; font-weight: bold; text-align: center; color: var(--primary); }
+        #errorBanner { display:none; background:#ffdddd; color:red; padding:15px; border:1px solid red; margin:10px; font-weight:bold; }
+
+        /* 資料タブ */
         h2 { border-left: 5px solid var(--accent); padding-left: 10px; color: var(--primary); margin-top: 30px; font-size: 1.3rem; }
         .chart-container { width: 100%; height: 350px; position: relative; margin-bottom: 20px; border: 1px solid #eee; }
         .formula-box { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 15px; height: 100%; }
@@ -72,10 +106,6 @@
         #growthTableContainer th:first-child, #growthTableContainer td:first-child { background: #eef2f5; font-weight: bold; width: 80px; position: sticky; left: 0; z-index: 10; border-right: 2px solid #ddd; }
         .harnack-table th { text-align: left; padding-left: 15px; width: 40%; }
         .harnack-table td { text-align: left; padding-left: 15px; }
-        .btn-action { color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn-action:hover { opacity: 0.9; }
-        .data-status { margin-top: 15px; font-weight: bold; text-align: center; color: var(--primary); }
-        #errorBanner { display:none; background:#ffdddd; color:red; padding:15px; border:1px solid red; margin:10px; font-weight:bold; }
     </style>
     
     <script>
@@ -97,64 +127,100 @@
 <body>
 
 <header>
-    <h1>💊 小児用量監査ツール V10.1</h1>
+    <h1>💊 小児用量監査ツール V20</h1>
 </header>
 
 <div id="errorBanner"></div>
 
 <ul class="tab-nav">
-    <li class="active" onclick="switchTab('tab-calc')">監査・計算</li>
-    <li onclick="switchTab('tab-knowledge')">資料・知識</li>
-    <li onclick="switchTab('tab-settings')">データ更新</li>
+    <li class="active" onclick="switchTab('tab-oral')" data-tab="tab-oral">💊 内服・外用</li>
+    <li onclick="switchTab('tab-inj')" data-tab="tab-inj">💉 注射薬</li>
+    <li onclick="switchTab('tab-knowledge')" data-tab="tab-knowledge">📊 資料・知識</li>
+    <li onclick="switchTab('tab-settings')" data-tab="tab-settings">🛠️ データ更新</li>
 </ul>
 
 <div class="container">
-    <div id="tab-calc" class="tab-content active">
-        <div id="loadingStatus" style="text-align:center; padding:10px; color:#666; font-size:0.9rem;">⏳ 準備中...</div>
-        <div id="safetyAlertArea"></div>
+    <div id="tab-oral" class="tab-content active">
+        <div id="loadingStatusOral" style="text-align:center; padding:10px; color:#666; font-size:0.9rem;">⏳ 準備中...</div>
+        <div id="safetyAlertAreaOral"></div>
 
         <div class="panel">
             <div class="row">
-                <div class="col search-container" style="flex: 2; min-width: 100%;">
-                    <label>薬剤検索</label>
-                    <input type="text" id="searchBox" placeholder="例：ミヤBM、タミフル..." autocomplete="off">
-                    <ul id="drugList"></ul>
+                <div class="col search-container" style="flex: 2;">
+                    <label>内服薬検索</label>
+                    <input type="text" id="searchBoxOral" placeholder="例：カロナール、タミフル..." autocomplete="off">
+                    <ul id="drugListOral" class="drug-list"></ul>
                 </div>
             </div>
             <div class="row">
-                <div class="col"><label>体重 (kg)</label><input type="number" id="weight" step="0.1" placeholder="例: 15.5" oninput="runAudit()"></div>
-                <div class="col"><label>年齢 (歳)</label><input type="number" id="age" step="0.1" placeholder="例: 3" oninput="runAudit()"></div>
+                <div class="col"><label>体重 (kg)</label><input type="number" id="weightOral" step="0.1" placeholder="15.5" oninput="runAudit('Oral')"></div>
+                <div class="col"><label>年齢 (歳)</label><input type="number" id="ageOral" step="0.1" placeholder="3" oninput="runAudit('Oral')"></div>
                 <div class="col">
-                    <label id="doseLabel">処方量</label>
-                    <input type="number" id="doseInput" placeholder="入力" oninput="runAudit()" disabled>
-                    
-                    <label class="liquid-switch" id="liquidSwitchArea">
-                        <input type="checkbox" id="isLiquidInput" onchange="runAudit()"> mLで入力
-                    </label>
-                    <div id="liquidInfo" class="liquid-info"></div>
+                    <label id="doseLabelOral">処方量</label>
+                    <input type="number" id="doseInputOral" placeholder="入力" oninput="runAudit('Oral')" disabled>
+                    <label class="liquid-switch" id="liquidSwitchOral"><input type="checkbox" id="isLiquidInputOral" onchange="runAudit('Oral')"> mL入力</label>
                 </div>
             </div>
         </div>
         
-        <div id="scenarioArea" class="scenario-selector" style="display:none;">
-            <span class="scenario-title">📌 適応・年齢区分を選択してください:</span>
-            <div id="scenarioOptions"></div>
+        <div id="scenarioAreaOral" class="scenario-selector" style="display:none;">
+            <span id="scenarioTitleOral" class="scenario-title">📌 適応・年齢区分:</span><div id="scenarioOptionsOral"></div>
         </div>
 
-        <div id="resultCard">
+        <div id="resultCardOral" class="result-card">
             <div class="card-header">
-                <div><span id="resName" style="font-weight:bold; font-size:1.2rem;"></span><span id="resGeneric" style="font-size:0.9rem; margin-left:10px; opacity:0.9;"></span></div>
-                <span id="auditTypeBadge" class="dose-label"></span>
+                <div><span id="resNameOral" style="font-weight:bold; font-size:1.2rem;"></span><span id="resGenericOral" style="font-size:0.9rem; margin-left:10px; opacity:0.9;"></span></div>
+                <span id="auditTypeBadgeOral" class="dose-label"></span>
             </div>
             <div class="card-body">
-                <div id="auditResult" class="audit-box audit-check"></div>
+                <div id="guidelineAreaOral" class="guideline-area" style="display:none;"></div>
+                <div id="auditResultOral"></div>
                 
-                <div style="margin-bottom:8px; font-weight:bold; color:var(--primary);">用法・用量（小児）原文:</div>
-                <div id="resPedsText" class="original-text"></div>
-                <div id="refArea" style="margin-top:20px; display:none;">
-                    <div style="margin-bottom:8px; font-weight:bold; color:#666;">📚 参考文献:</div>
-                    <div id="refLinksContainer" class="ref-links"></div>
+                <div style="margin-top:20px; margin-bottom:8px; font-weight:bold; color:var(--primary);">原文:</div>
+                <div id="resPedsTextOral" class="original-text"></div>
+                <div id="refAreaOral" style="margin-top:20px; display:none;"><div id="refLinksContainerOral" class="ref-links"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-inj" class="tab-content inj-mode">
+        <div id="safetyAlertAreaInj"></div>
+
+        <div class="panel">
+            <div class="row">
+                <div class="col search-container" style="flex: 2;">
+                    <label style="color:#8e44ad;">💉 注射薬検索</label>
+                    <input type="text" id="searchBoxInj" placeholder="例：アミカシン、モダシン..." autocomplete="off">
+                    <ul id="drugListInj" class="drug-list"></ul>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col"><label>体重 (kg)</label><input type="number" id="weightInj" step="0.1" placeholder="15.5" oninput="runAudit('Inj')"></div>
+                <div class="col"><label>年齢 (歳)</label><input type="number" id="ageInj" step="0.1" placeholder="3" oninput="runAudit('Inj')"></div>
+                <div class="col">
+                    <label id="doseLabelInj">処方量</label>
+                    <input type="number" id="doseInputInj" placeholder="入力" oninput="runAudit('Inj')" disabled>
+                    <label class="liquid-switch" id="liquidSwitchInj"><input type="checkbox" id="isLiquidInputInj" onchange="runAudit('Inj')"> mL入力</label>
+                </div>
+            </div>
+        </div>
+        
+        <div id="scenarioAreaInj" class="scenario-selector" style="display:none;">
+            <span id="scenarioTitleInj" class="scenario-title">📌 区分を選択:</span><div id="scenarioOptionsInj"></div>
+        </div>
+
+        <div id="resultCardInj" class="result-card">
+            <div class="card-header">
+                <div><span id="resNameInj" style="font-weight:bold; font-size:1.2rem;"></span><span id="resGenericInj" style="font-size:0.9rem; margin-left:10px; opacity:0.9;"></span></div>
+                <span id="auditTypeBadgeInj" class="dose-label"></span>
+            </div>
+            <div class="card-body">
+                <div id="guidelineAreaInj" class="guideline-area" style="display:none;"></div>
+                <div id="auditResultInj"></div>
+                
+                <div style="margin-top:20px; margin-bottom:8px; font-weight:bold; color:#8e44ad;">原文:</div>
+                <div id="resPedsTextInj" class="original-text"></div>
+                <div id="refAreaInj" style="margin-top:20px; display:none;"><div id="refLinksContainerInj" class="ref-links"></div></div>
             </div>
         </div>
     </div>
@@ -166,15 +232,32 @@
             <div class="col"><h3 style="text-align:center; color:#3498db;">男子</h3><div id="chartBoy" class="chart-container"></div></div>
         </div>
         <div id="growthTableContainer"></div>
+        
         <h2>🧮 計算式</h2>
-        <div class="formula-box" style="margin-bottom:20px;">
-            <div class="formula-title">Augsberger式 II</div>
-            <div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div>
-            <div style="background:#f0f0f0; padding:10px;">
-                成人: <input type="number" id="augAdult" style="width:70px;">mg × 体重: <input type="number" id="augWeight" style="width:70px;">kg 
-                <button onclick="calcAugsberger()">計算</button> = <span id="augResult">---</span>mg
+        <div class="row">
+            <div class="col">
+                <div class="formula-box">
+                    <div class="formula-title">Augsberger式 II</div>
+                    <div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div>
+                    <div style="background:#f0f0f0; padding:10px;">
+                        成人: <input type="number" id="augAdult" style="width:70px;">mg × 体重: <input type="number" id="augWeight" style="width:70px;">kg 
+                        <button onclick="calcAugsberger()">計算</button> = <span id="augResult">---</span>mg
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="formula-box">
+                    <div class="formula-title">Schwartzの式 (eGFR推算)</div>
+                    <div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div>
+                    <div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div>
+                    <div style="background:#f0f0f0; padding:10px;">
+                        身長: <input type="number" id="schHeight" style="width:60px;">cm / Cr: <input type="number" id="schCr" style="width:60px;">
+                        <button onclick="calcSchwartz()">計算</button> = <span id="schResult">---</span>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col">
                 <div class="formula-box"><div class="formula-title">Von Harnack表</div><table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6M)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6M~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table></div>
@@ -188,10 +271,13 @@
     <div id="tab-settings" class="tab-content">
         <h2>🛠️ データベース管理</h2>
         <p>Excelデータを貼り付けて、テストまたはファイル作成を行います。</p>
-        <div style="background:#e3f2fd; padding:15px; border-left:5px solid #2196f3; margin-bottom:15px; font-size:0.9rem;"><strong>📝 Excel貼り付け列順 (全11列):</strong><br>[1]商品 [2]一般 [3]よみ [4]文 [5]最小 [6]最大 [7]単位 [8]上限 [9]参照 [10]年齢ルール [11]濃度</div>
+        <div style="background:#e3f2fd; padding:15px; border-left:5px solid #2196f3; margin-bottom:15px; font-size:0.9rem;">
+            <strong>📝 Excel貼り付け列順 (全13列):</strong><br>
+            [1]商品 [2]一般 [3]よみ [4]文 [5]最小 [6]最大 [7]単位 [8]上限 [9]参照 [10]年齢ルール [11]濃度 [12]区分 [13]グループID
+        </div>
         <textarea id="pasteArea" rows="12" placeholder="ここにExcelを貼り付け..."></textarea>
         <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn-action" style="background:#27ae60;" onclick="applyLocalData()">▶️ テスト反映 (この場だけで確認)</button>
+            <button class="btn-action" style="background:#27ae60;" onclick="applyLocalData()">▶️ テスト反映</button>
             <button class="btn-action" style="background:#2980b9;" onclick="downloadJsonFile()">⬇️ JSON作成 (GitHub用)</button>
         </div>
         <div id="saveStatus" class="data-status"></div>
@@ -199,253 +285,281 @@
 </div>
 
 <script>
-    // ■■■■■ グローバル変数定義 (最上部で宣言してReferenceError回避) ■■■■■
     let dbDrugs = [];
-    let currentRule = null;
-    let currentWarning = null;
-    let currentDrug = null; // ★ここが重要：検索前にnull定義
+    let currentOralDrug = null, currentInjDrug = null;
+    let currentOralRule = null, currentInjRule = null;
+    let currentOralWarning = null, currentInjWarning = null;
 
-    // --- 特別ルール・シナリオ ---
+    // 特別ルール
     const specialDrugRules = {
         "タミフル": [
-            { label: "治療 (1歳未満): 6mg/kg/日", rule: { min:6, max:6, unit:0 } },
-            { label: "治療 (1歳以上): 4mg/kg/日 (上限150mg)", rule: { min:4, max:4, unit:0, limitDay:150 } },
-            { label: "予防: 2mg/kg/日 (上限75mg)", rule: { min:2, max:2, unit:0, limitDay:75 } }
+            { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } },
+            { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } },
+            { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } }
         ],
         "オセルタミビル": [
-            { label: "治療 (1歳未満): 6mg/kg/日", rule: { min:6, max:6, unit:0 } },
-            { label: "治療 (1歳以上): 4mg/kg/日 (上限150mg)", rule: { min:4, max:4, unit:0, limitDay:150 } },
-            { label: "予防: 2mg/kg/日 (上限75mg)", rule: { min:2, max:2, unit:0, limitDay:75 } }
+            { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } },
+            { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } },
+            { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } }
         ],
         "デカドロン": [
-            { label: "気管支喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
+            { label: "喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
             { label: "クループ: 0.15-0.6mg/kg/回", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成: 0.5mg/日(固定)", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
+            { label: "先天性副腎過形成: 0.5mg/日", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
         ],
         "デキサメタゾン": [
-            { label: "気管支喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
+            { label: "喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
             { label: "クループ: 0.15-0.6mg/kg/回", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成: 0.5mg/日(固定)", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
+            { label: "先天性副腎過形成: 0.5mg/日", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
         ]
     };
 
     const drugWarnings = [
-        { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・骨発育不全リスクあり。他剤無効時のみ。" },
-        { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満】ライ症候群リスクのため原則禁忌(川崎病除く)。" },
-        { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制のリスクがあります。" },
-        { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制のリスクがあります。" },
-        { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスクあり。" },
-        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスクあり。" }
+        { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・骨発育不全リスク" },
+        { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満】ライ症候群リスク(川崎病除く)" },
+        { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
+        { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
+        { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
+        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }
     ];
 
-    const dbRefs = { 1: { title: "添付文書", url: "" }, 2: { title: "新小児薬量量", url: "" }, 3: { title: "先天性心疾患ガイドライン(2018)", url: "https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf" }, 4: { title: "小児結核診療のてびき", url: "https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf" }, 5: { title: "Official American Thoracic Society/CDC/IDSA", url: "https://academic.oup.com/cid/article/63/7/e147/2196792" }, 6: { title: "新生児マススクリーニングガイド", url: "https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf" }, 7: { title: "マクロライド系抗生物質の新しい展開", url: "https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif" }, 8: { title: "今日の治療指針2025＞膀胱尿管逆流", url: "" }, 9: { title: "Medspace", url: "https://reference.medscape.com/drug/valium-valtoco-diazepam-342902" }, 10: { title: "未承認薬・適応外薬の要望", url: "https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf" }, 11: { title: "JAID/JSC 感染症治療ガイドライン", url: "https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf" }, 12: { title: "小児気管支喘息治療・管理ガイドライン", url: "" }, 13: { title: "UpToDate 急性喘息増悪", url: "https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management" }, 14: { title: "UpToDate 先天性副腎過形成", url: "https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment" }, 15: { title: "軽症胃腸炎関連けいれんに対するcarbamazepine", url: "https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja" }, 16: { title: "今日の小児治療指針17版>VitD欠乏", url: "" }, 17: { title: "今日の小児治療指針17版>新生児低Ca", url: "" }, 18: { title: "今日の小児治療指針17版>急性下痢", url: "" }, 19: { title: "新生児診療マニュアル", url: "" }, 20: { title: "周産期医学 50 (増刊) 2020", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j" }, 21: { title: "医師のみ閲覧可能マニュアル", url: "" }, 22: { title: "小児心不全薬物治療ガイドライン", url: "https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html" }, 23: { title: "今日の治療指針2024>便秘", url: "" }, 24: { title: "今日の小児治療指針17版>ウイルス性胃腸炎", url: "" }, 25: { title: "小児科ですぐに戦えるホコとタテ", url: "" }, 26: { title: "乳児胃食道逆流 六君子湯", url: "https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja" }, 27: { title: "今日の小児治療指針17版>胃食道逆流", url: "" }, 28: { title: "周産期医学 50 (増刊) 458-462", url: "https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j" }, 29: { title: "ツムラMEDICAL SITE", url: "https://medical.tsumura.co.jp/support/knowledge/20221104_2.html" }, 30: { title: "公知申請への該当性に係る報告書", url: "https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf" }, 31: { title: "新生児鉄剤投与ガイドライン", url: "http://jsnhd.or.jp/pdf/31-1-159-185.pdf" }, 32: { title: "IWK Health Neonatal Guidelines", url: "https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo" } };
+    const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬量量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"IWK Health Neonatal Guidelines",url:"https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo"} };
     const growthData = { boy: [[0,3.0],[1,9.6],[2,12.5],[3,14.6],[4,16.7],[5,18.9],[6,21.4],[7,24.1],[8,27.2],[9,30.6],[10,34.2],[11,38.2],[12,42.5]], girl: [[0,3.0],[1,8.9],[2,11.8],[3,14.0],[4,16.2],[5,18.5],[6,20.9],[7,23.6],[8,26.5],[9,30.0],[10,33.8],[11,38.0],[12,42.0]] };
 
     window.onload = function() {
         try {
             drawGrowthChart('chartGirl', 'girl'); drawGrowthChart('chartBoy', 'boy'); drawGrowthTable();
-            fetch('./database.json').then(r=>r.json()).then(d=>{ dbDrugs=d; document.getElementById('loadingStatus').innerHTML=`✅ DB接続完了 (${d.length}件)`; document.getElementById('loadingStatus').style.color="green"; })
-            .catch(e=>{ const local=localStorage.getItem('pediatric_drug_db'); if(local){ dbDrugs=JSON.parse(local); document.getElementById('loadingStatus').innerHTML=`⚠️ オフラインデータ (${dbDrugs.length}件)`; } else { document.getElementById('loadingStatus').innerHTML=`ℹ️ データ未登録`; } });
+            fetch('./database.json').then(r=>r.json()).then(d=>{ dbDrugs=d; document.getElementById('loadingStatusOral').innerHTML=`✅ DB接続完了 (${d.length}件)`; })
+            .catch(e=>{ const local=localStorage.getItem('pediatric_drug_db'); if(local){ dbDrugs=JSON.parse(local); document.getElementById('loadingStatusOral').innerHTML=`⚠️ オフラインデータ (${dbDrugs.length}件)`; } else { document.getElementById('loadingStatusOral').innerHTML=`ℹ️ データ未登録`; } });
         } catch(e){ console.error("Init:", e); }
     };
 
-    function switchTab(id){
-        document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
-        document.querySelectorAll('.tab-nav li').forEach(e=>e.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        const idx={'tab-calc':0,'tab-knowledge':1,'tab-settings':2}[id];
-        document.querySelectorAll('.tab-nav li')[idx].classList.add('active');
+    function setupSearch(type) {
+        const box = document.getElementById(`searchBox${type}`);
+        const list = document.getElementById(`drugList${type}`);
+        box.addEventListener('keyup', (e) => {
+            const val = e.target.value.toLowerCase().replace(/\s+/g, '');
+            if (!val) { list.style.display = 'none'; return; }
+            list.innerHTML = '';
+            const targetType = (type === 'Inj') ? 1 : 0;
+            const groups = new Map(); const singles = [];
+            dbDrugs.forEach(d => {
+                const dType = (d.type !== undefined) ? d.type : 0;
+                if (dType !== targetType) return;
+                if (d.name.toLowerCase().includes(val) || d.generic.toLowerCase().includes(val) || d.yomi.replace(/\s+/g, '').includes(val)) {
+                    if (d.groupId) { if (!groups.has(d.groupId)) groups.set(d.groupId, d); } else singles.push(d);
+                }
+            });
+            const showItem = (d, isGroup) => {
+                const li = document.createElement('li');
+                li.textContent = `${d.name} (${d.generic})` + (isGroup ? " [選択]" : "");
+                li.onclick = () => selectDrug(d, type); list.appendChild(li);
+            };
+            groups.forEach(d => showItem(d, true));
+            singles.forEach(d => showItem(d, false));
+            list.style.display = (groups.size + singles.length > 0) ? 'block' : 'none';
+        });
     }
+    setupSearch('Oral'); setupSearch('Inj');
 
-    const searchBox = document.getElementById('searchBox');
-    const drugList = document.getElementById('drugList');
-    
-    searchBox.addEventListener('keyup', (e) => {
-        const val = e.target.value.toLowerCase().replace(/\s+/g, '');
-        if (!val) { drugList.style.display = 'none'; return; }
-        drugList.innerHTML = '';
-        const hits = dbDrugs.filter(d => (d.name && d.name.toLowerCase().includes(val)) || (d.generic && d.generic.toLowerCase().includes(val)) || (d.yomi && d.yomi.replace(/\s+/g, '').includes(val)));
-        if (hits.length > 0) {
-            drugList.style.display = 'block';
-            hits.forEach(d => { const li = document.createElement('li'); li.textContent = `${d.name} (${d.generic})`; li.onclick = () => selectDrug(d); drugList.appendChild(li); });
-        } else { drugList.style.display = 'none'; }
-    });
+    function selectDrug(drug, type) {
+        if (type === 'Oral') { currentOralDrug = drug; currentOralRule = drug; } else { currentInjDrug = drug; currentInjRule = drug; }
+        document.getElementById(`searchBox${type}`).value = drug.name;
+        document.getElementById(`drugList${type}`).style.display = 'none';
+        document.getElementById(`doseInput${type}`).disabled = false;
+        document.getElementById(`resultCard${type}`).style.display = 'block';
+        document.getElementById(`resName${type}`).textContent = drug.name;
+        document.getElementById(`resGeneric${type}`).textContent = drug.generic;
+        document.getElementById(`resPedsText${type}`).textContent = drug.text;
 
-    function selectDrug(drug) {
-        currentDrug = drug; // ★ここで選択
-        searchBox.value = drug.name;
-        drugList.style.display = 'none';
-        document.getElementById('doseInput').disabled = false;
-        document.getElementById('resultCard').style.display = 'block';
-        document.getElementById('resName').textContent = drug.name;
-        document.getElementById('resGeneric').textContent = drug.generic;
-        document.getElementById('resPedsText').textContent = drug.text;
-
-        const liqSwitch = document.getElementById('liquidSwitchArea');
-        const liqInfo = document.getElementById('liquidInfo');
-        document.getElementById('isLiquidInput').checked = false;
+        const liqSwitch = document.getElementById(`liquidSwitch${type}`);
+        document.getElementById(`isLiquidInput${type}`).checked = false;
         if (drug.conc && drug.conc > 0) {
             liqSwitch.style.display = 'inline-flex';
-            liqInfo.style.display = 'block';
-            liqInfo.textContent = `💧 液剤モード対応: 濃度 ${drug.conc} mg/mL`;
-        } else {
-            liqSwitch.style.display = 'none'; liqInfo.style.display = 'none';
-        }
+            liqSwitch.innerHTML = `<input type="checkbox" id="isLiquidInput${type}" onchange="runAudit('${type}')"> mL入力 (濃度:${drug.conc}mg/mL)`;
+        } else { liqSwitch.style.display = 'none'; }
 
-        currentWarning = null;
-        const alertArea = document.getElementById('safetyAlertArea');
+        let warning = null;
+        const alertArea = document.getElementById(`safetyAlertArea${type}`);
         alertArea.style.display = "none";
         for (const w of drugWarnings) {
             if (drug.name.includes(w.key) || drug.generic.includes(w.key)) {
-                currentWarning = w;
-                alertArea.innerHTML = w.msg;
-                alertArea.className = "safety-warning"; alertArea.style.display = "block";
-                document.getElementById('age').classList.add('input-alert');
-                break; 
+                warning = w; alertArea.innerHTML = w.msg; alertArea.className = "safety-warning"; alertArea.style.display = "block";
+                document.getElementById(`age${type}`).classList.add('input-alert'); break;
             }
         }
-        if(!currentWarning) document.getElementById('age').classList.remove('input-alert');
+        if (type === 'Oral') currentOralWarning = warning; else currentInjWarning = warning;
+        if (!warning) document.getElementById(`age${type}`).classList.remove('input-alert');
 
-        const scenarioDiv = document.getElementById('scenarioArea');
-        const optsDiv = document.getElementById('scenarioOptions');
+        const scenDiv = document.getElementById(`scenarioArea${type}`);
+        const optsDiv = document.getElementById(`scenarioOptions${type}`);
         optsDiv.innerHTML = '';
-        let scenarios = null;
-        for (const [key, list] of Object.entries(specialDrugRules)) {
-            if (drug.name.includes(key) || drug.generic.includes(key)) { scenarios = list; break; }
+        let scenarios = [];
+        
+        if (drug.groupId) {
+            const targetType = (type === 'Inj') ? 1 : 0;
+            const groupMembers = dbDrugs.filter(d => d.groupId === drug.groupId && ((d.type||0) === targetType));
+            scenarios = groupMembers.map(d => ({ ...d, label: d.name })); 
+        } else {
+            for (const [key, list] of Object.entries(specialDrugRules)) {
+                if (drug.name.includes(key) || drug.generic.includes(key)) { scenarios = list; break; }
+            }
         }
 
-        if (scenarios) {
-            scenarioDiv.style.display = 'block';
+        if (scenarios && scenarios.length > 0) {
+            scenDiv.style.display = 'block';
+            document.getElementById(`scenarioTitle${type}`).textContent = drug.groupId ? "📌 区分を選択:" : "📌 適応・年齢区分:";
             scenarios.forEach((s, idx) => {
-                const label = document.createElement('label'); label.className = "scenario-opt";
-                label.innerHTML = `<input type="radio" name="scenario" value="${idx}" ${idx===0?'checked':''}> ${s.label}`;
-                label.onchange = () => { applyRule(s); runAudit(); };
-                optsDiv.appendChild(label);
+                const btn = document.createElement('button');
+                btn.className = "scenario-btn";
+                btn.textContent = s.label;
+		btn.onclick = () => {
+		    Array.from(optsDiv.children).forEach(c => c.classList.remove('active'));
+		    btn.classList.add('active');
+		
+		    // 【修正1】データを勝手に加工せず、そのまま使う
+		    const selectedRule = s; 
+		
+		    // 【修正2】データセットに名前やテキストが含まれている場合（注射薬やグループID持ち）は表示を更新する
+		    // デカドロン等の特殊ルールはテキストを持っていないため、元のテキストを維持する
+		    if(selectedRule.name && selectedRule.text){
+		        document.getElementById(`resName${type}`).textContent = selectedRule.name;
+		        document.getElementById(`resPedsText${type}`).textContent = selectedRule.text;
+		        updateRefs(selectedRule, type);
+		    }
+    applyRule(selectedRule, type); 
+    runAudit(type); 
+};
+                if (idx === 0) btn.click();
+                optsDiv.appendChild(btn);
             });
-            applyRule(scenarios[0]);
         } else {
-            scenarioDiv.style.display = 'none';
-            applyRule(drug);
+            scenDiv.style.display = 'none';
+            applyRule(drug, type);
+            updateRefs(drug, type);
         }
-        
-        const refDiv = document.getElementById('refLinksContainer'); refDiv.innerHTML = '';
-        document.getElementById('refArea').style.display = (drug.refs && drug.refs.length > 0) ? 'block' : 'none';
+        runAudit(type);
+    }
+
+    function updateRefs(drug, type) {
+        const refDiv = document.getElementById(`refLinksContainer${type}`); refDiv.innerHTML = '';
+        document.getElementById(`refArea${type}`).style.display = (drug.refs && drug.refs.length > 0) ? 'block' : 'none';
         if(drug.refs) drug.refs.forEach(id => {
             const d = dbRefs[id]; const a = document.createElement('a'); a.textContent = `[${id}] ${d ? d.title : '文献'}`;
             if (d && d.url) { a.href = d.url; a.target = "_blank"; } else { a.className = 'ref-nolink'; }
             refDiv.appendChild(a);
         });
-        runAudit();
     }
 
-    function applyRule(data) {
-        currentRule = data;
-        const badge = document.getElementById('auditTypeBadge');
-        const doseLabel = document.getElementById('doseLabel');
+    function applyRule(data, type) {
+        if (type === 'Oral') currentOralRule = data; else currentInjRule = data;
+        const badge = document.getElementById(`auditTypeBadge${type}`);
+        const doseLabel = document.getElementById(`doseLabel${type}`);
+        const inputField = document.getElementById(`doseInput${type}`);
         let unit = 0;
         if (data.ageRule) unit = data.ageRule.unit; else if (data.rule) unit = data.rule.unit;
 
         if (data.ageRule || data.rule) {
-            if (unit === 1) {
-                doseLabel.textContent = "処方量 (1回量)";
-                badge.textContent = "基準: 1回量"; badge.style.background = "#fff3cd"; badge.style.color = "#856404";
-            } else {
-                doseLabel.textContent = "処方量 (1日総量)";
-                badge.textContent = "基準: 1日総量"; badge.style.background = "#d1ecf1"; badge.style.color = "#0c5460";
+            if (unit === 1) { 
+                doseLabel.innerHTML = '処方量 <span class="unit-emph unit-dose">(1回量)</span>';
+                badge.textContent = "基準: 1回量"; badge.style.background = "#fff3cd"; badge.style.color = "#d35400";
+                inputField.className = "input-dose";
+            } else { 
+                doseLabel.innerHTML = '処方量 <span class="unit-emph unit-day">(1日総量)</span>';
+                badge.textContent = "基準: 1日総量"; badge.style.background = "#d1ecf1"; badge.style.color = "#2980b9";
+                inputField.className = "input-day";
             }
         } else {
             doseLabel.textContent = "処方量 (判定不可)";
             badge.textContent = "目視のみ"; badge.style.background = "#e2e3e5"; badge.style.color = "#383d41";
+            inputField.className = "";
         }
     }
 
-    // ★修正版 runAudit: 未定義チェックを徹底
-    function runAudit() {
-        const resBox = document.getElementById('auditResult');
-        const alertArea = document.getElementById('safetyAlertArea');
-        const weight = parseFloat(document.getElementById('weight').value);
-        const age = parseFloat(document.getElementById('age').value);
+    function runAudit(type) {
+        const drug = (type === 'Oral') ? currentOralDrug : currentInjDrug;
+        const rule = (type === 'Oral') ? currentOralRule : currentInjRule;
+        const warning = (type === 'Oral') ? currentOralWarning : currentInjWarning;
+        const resBox = document.getElementById(`auditResult${type}`);
+        const guidelineArea = document.getElementById(`guidelineArea${type}`);
         
-        // 1. 薬剤未選択なら終了
-        if (!currentDrug) return; 
+        if (!drug || !rule) return;
 
-        // 2. 入力値取得 (安全に)
-        const rawInput = parseFloat(document.getElementById('doseInput').value);
+        const weight = parseFloat(document.getElementById(`weight${type}`).value);
+        const age = parseFloat(document.getElementById(`age${type}`).value);
+        const rawInput = parseFloat(document.getElementById(`doseInput${type}`).value);
         let inputDose = rawInput;
-        const isLiquid = document.getElementById('isLiquidInput').checked;
-        // Check if currentDrug exists before accessing properties
-        const drugConc = (currentDrug && currentDrug.conc) ? currentDrug.conc : 0;
+        const isLiquid = document.getElementById(`isLiquidInput${type}`).checked;
+        const drugConc = (drug && drug.conc) ? drug.conc : 0;
+        if (isLiquid && !isNaN(rawInput) && drugConc > 0) inputDose = rawInput * drugConc;
 
-        if (isLiquid && !isNaN(rawInput) && drugConc > 0) { inputDose = rawInput * drugConc; }
-
-        if (currentWarning) {
-            if (!isNaN(age) && age < currentWarning.limitAge) {
-                alertArea.className = "safety-danger"; document.getElementById('age').classList.remove('input-alert');
-            } else if (!isNaN(age)) {
-                alertArea.className = "safety-warning"; document.getElementById('age').classList.remove('input-alert');
-            } else { document.getElementById('age').classList.add('input-alert'); }
+        const alertArea = document.getElementById(`safetyAlertArea${type}`);
+        if (warning) {
+            if (!isNaN(age) && age < warning.limitAge) { alertArea.className = "safety-danger"; document.getElementById(`age${type}`).classList.remove('input-alert'); }
+            else if (!isNaN(age)) { alertArea.className = "safety-warning"; document.getElementById(`age${type}`).classList.remove('input-alert'); }
+            else { document.getElementById(`age${type}`).classList.add('input-alert'); }
         }
 
-        if (!currentRule) return;
+        const calcRange = (minMg, maxMg, unitStr) => {
+            let suffix = "";
+            if (drugConc > 0) { const minML = (minMg / drugConc).toFixed(2); const maxML = (maxMg / drugConc).toFixed(2); suffix = `<br><span style="color:#0d47a1">(${minML} ～ ${maxML} mL)</span>`; }
+            return `<strong>${minMg.toFixed(2)}～${maxMg.toFixed(2)} <span class="unit-emph ${unitStr=='回'?'unit-dose':'unit-day'}">mg/${unitStr}</span></strong>${suffix}`;
+        };
 
-        // ハイブリッド判定の変数
-        let ageHtml = "", weightHtml = "";
-        let isAgeSafe = false, isWeightSafe = false;
-        let hasAgeRule = false, hasWeightRule = false;
+        // ガイドライン文字列と判定ロジック
+        let guideHtml = "";
+        let resultHtml = "";
+        let isAgeSafe=false, isWeightSafe=false;
+        let hasAgeRule=false, hasWeightRule=false;
 
-        // --- A: 年齢固定 ---
-        if (currentRule.ageRule && !isNaN(age)) {
+        // A: Age Rule
+        if (rule.ageRule && !isNaN(age)) {
             hasAgeRule = true;
-            const ar = currentRule.ageRule;
-            const unitStr = ar.unit === 1 ? "回" : "日";
+            const ar = rule.ageRule; const unitStr = ar.unit === 1 ? "回" : "日";
             const match = ar.list.find(r => age >= r.start && age < r.end);
-            
             if (match) {
-                const t = match.dose;
-                // 液剤換算表示
-                let suffix = "";
-                if(drugConc > 0) { suffix = ` <span style='color:#0d47a1'>(${ (t/drugConc).toFixed(2) } mL)</span>`; }
-
-                if(!inputDose) {
-                    ageHtml = `<div><strong>年齢基準 (${age}歳):</strong> 推奨 ${t} mg/${unitStr}${suffix}</div>`;
-                } else {
-                    const ratio = inputDose / t;
-                    if (ratio < 0.8) ageHtml = `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 年齢基準: ${t}mg に対し不足</div>`;
-                    else if (ratio > 1.2) ageHtml = `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 年齢基準: ${t}mg を超過</div>`;
-                    else { ageHtml = `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 年齢基準 (${t}mg) に適合</div>`; isAgeSafe = true; }
+                let tMin = match.dose, tMax = match.dose;
+                if(match.isKg && weight) { tMin *= weight; tMax *= weight; }
+                guideHtml += `<div><strong>年齢基準 (${age}歳):</strong> 推奨 ${calcRange(tMin, tMax, unitStr)}</div>`;
+                
+                if(inputDose) {
+                    // V19: Tolerance ±5%
+                    if (inputDose < tMin * 0.95) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 年齢基準不足</div>`;
+                    else if (inputDose > tMax * 1.05) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 年齢基準超過</div>`;
+                    else { resultHtml += `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 年齢基準適合</div>`; isAgeSafe = true; }
                 }
-            } else {
-                ageHtml = `<div class="detail-result"><span class="badge-mini bg-gray">対象外</span> この年齢(${age}歳)の固定設定なし</div>`;
-            }
+            } else { guideHtml += `<div><strong>年齢基準:</strong> 対象外 (${age}歳設定なし)</div>`; }
         }
 
-        // --- B: 体重換算 ---
-        if (currentRule.rule && weight) {
+        // B: Weight Rule
+        if (rule.rule && weight) {
             hasWeightRule = true;
-            const r = currentRule.rule;
-            const unitStr = r.unit === 1 ? "回" : "日";
-            let minSafe = r.min * weight;
-            let maxSafe = r.max * weight;
+            const r = rule.rule; const unitStr = r.unit === 1 ? "回" : "日";
+            let minSafe = r.min * weight; let maxSafe = r.max * weight;
             let limitMsg = "";
             if (r.limitDay && r.unit === 0 && maxSafe > r.limitDay) { maxSafe = r.limitDay; limitMsg = `(上限${r.limitDay})`; }
 
-            // 液剤換算
-            let suffixMin="", suffixMax="";
-            if(drugConc > 0) { suffixMin=`/ ${(minSafe/drugConc).toFixed(2)}mL`; suffixMax=`/ ${(maxSafe/drugConc).toFixed(2)}mL`; }
+            guideHtml += `<div><strong>体重基準 (${weight}kg):</strong> ${calcRange(minSafe, maxSafe, unitStr)} ${limitMsg}</div>`;
 
-            if(!inputDose) {
-                weightHtml = `<div><strong>体重基準 (${weight}kg):</strong> ${minSafe.toFixed(2)}${suffixMin} ～ ${maxSafe.toFixed(2)}${suffixMax} mg/${unitStr}</div>`;
-            } else {
-                if (inputDose < minSafe) weightHtml = `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 体重基準: ${minSafe.toFixed(2)}mg 未満</div>`;
-                else if (inputDose > maxSafe) weightHtml = `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 体重基準: ${maxSafe.toFixed(2)}mg 超過 ${limitMsg}</div>`;
-                else { weightHtml = `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 体重基準内 (${minSafe.toFixed(2)}～${maxSafe.toFixed(2)}mg)</div>`; isWeightSafe = true; }
+            if(inputDose) {
+                // V19: Tolerance ±5%
+                if (inputDose < minSafe * 0.95) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 体重基準未満</div>`;
+                else if (inputDose > maxSafe * 1.05) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 体重基準超過</div>`;
+                else { resultHtml += `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 体重基準内</div>`; isWeightSafe = true; }
             }
         }
 
-        // 総合判定
+        // 表示更新 (V19: 常時表示)
+        if(guideHtml) {
+            guidelineArea.style.display = "block";
+            guidelineArea.innerHTML = guideHtml;
+        } else {
+            guidelineArea.style.display = "none";
+        }
+
         if (!inputDose) {
             resBox.className = "audit-box audit-check";
-            resBox.innerHTML = (ageHtml || "") + (weightHtml || "") || "体重または年齢を入力してください";
+            resBox.innerHTML = "体重または年齢を入力してください (処方量入力で判定)";
             return;
         }
 
@@ -454,13 +568,8 @@
         else if (hasAgeRule) finalSafe = isAgeSafe;
         else if (hasWeightRule) finalSafe = isWeightSafe;
 
-        if (finalSafe) {
-            resBox.className = "audit-box audit-safe";
-            resBox.innerHTML = `<strong>✅ 判定: 適正範囲内</strong> (いずれかの基準に適合)<br>${ageHtml}${weightHtml}`;
-        } else {
-            resBox.className = "audit-box audit-danger";
-            resBox.innerHTML = `<strong>⚠️ 判定: 注意が必要</strong> (基準範囲外)<br>${ageHtml}${weightHtml}`;
-        }
+        if (finalSafe) { resBox.className = "audit-box audit-safe"; resBox.innerHTML = `<strong>✅ 判定: 適正範囲内</strong> (±5%許容)<br>${resultHtml}`; }
+        else { resBox.className = "audit-box audit-danger"; resBox.innerHTML = `<strong>⚠️ 判定: 注意が必要</strong><br>${resultHtml}`; }
     }
 
     // --- コンバーター ---
@@ -480,44 +589,33 @@
             if (cols.length < 4) return;
             const min = parseFloat(cols[4]), max = parseFloat(cols[5]), flag = parseInt(cols[6]);
             const limit = parseFloat(cols[7]), refsRaw = cols[8] ? cols[8].trim() : "", ageRuleRaw = cols[9] ? cols[9].trim() : "";
-            const conc = parseFloat(cols[10]);
+            const conc = parseFloat(cols[10]), type = parseInt(cols[11]), groupId = cols[12] ? cols[12].trim() : "";
 
             let rule = null; if (!isNaN(min) && !isNaN(max) && !isNaN(flag)) rule = { min: min, max: max, unit: flag, limitDay: isNaN(limit) ? null : limit };
             let ageRule = null;
             if (ageRuleRaw) {
                 const list = [];
-                ageRuleRaw.split(',').forEach(p => { const m = p.match(/([\d\.]+)-([\d\.]+):([\d\.]+)/); if(m) list.push({ start: parseFloat(m[1]), end: parseFloat(m[2]), dose: parseFloat(m[3]) }); });
+                ageRuleRaw.split(',').forEach(p => {
+                    const isKg = p.trim().toLowerCase().endsWith('kg');
+                    const cleanP = p.replace(/kg$/i, '');
+                    const m = cleanP.match(/([\d\.]+)-([\d\.]+):([\d\.]+)/);
+                    if(m) list.push({ start: parseFloat(m[1]), end: parseFloat(m[2]), dose: parseFloat(m[3]), isKg: isKg });
+                });
                 if(list.length > 0) ageRule = { list: list, unit: !isNaN(flag) ? flag : 0 };
             }
             let refs = refsRaw ? refsRaw.split(/[,、\s]+/).map(s => parseInt(s.replace(/\D/g, ''))).filter(n => !isNaN(n)) : [];
 
-            result.push({ name: cols[0].trim(), generic: cols[1].trim(), yomi: cols[2].trim(), text: cols[3].trim(), rule: rule, ageRule: ageRule, refs: refs, conc: !isNaN(conc)?conc:0 });
+            result.push({ name: cols[0].trim(), generic: cols[1].trim(), yomi: cols[2].trim(), text: cols[3].trim(), rule: rule, ageRule: ageRule, refs: refs, conc: !isNaN(conc)?conc:0, type: !isNaN(type)?type:0, groupId: groupId });
         });
         return result;
     }
 
-    function applyLocalData() {
-        const data = parseExcelData(); if(!data) return;
-        dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data));
-        document.getElementById('loadingStatus').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。");
-    }
-    function downloadJsonFile() {
-        const data = parseExcelData(); if(!data) return;
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'database.json'; a.click(); URL.revokeObjectURL(url);
-    }
-
-    // --- その他 ---
+    function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。"); }
+    function downloadJsonFile() { const data = parseExcelData(); if(!data) return; const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'database.json'; a.click(); URL.revokeObjectURL(url); }
     function calcAugsberger() { const ad = parseFloat(document.getElementById('augAdult').value); const wt = parseFloat(document.getElementById('augWeight').value); if (ad && wt) document.getElementById('augResult').textContent = (ad * (wt * 4 + 20) / 100).toFixed(1); }
-    function drawGrowthChart(cid, type) {
-        const w=300, h=250, pad=30; const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width","100%"); svg.setAttribute("height","100%"); svg.setAttribute("viewBox",`0 0 ${w} ${h}`);
-        const d = growthData[type]; const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d",`M${pad},${pad} V${h-pad} H${w-pad}`); path.setAttribute("stroke","#333"); path.setAttribute("stroke-width","1"); path.setAttribute("fill","none"); svg.appendChild(path);
-        let lineD = `M`; d.forEach((p,i)=>{ const x=pad+(p[0]/12)*(w-pad*2); const y=(h-pad)-(p[1]/50)*(h-pad*2); lineD+=`${i===0?'':','}${x} ${y}`; const c=document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx",x); c.setAttribute("cy",y); c.setAttribute("r",2); c.setAttribute("fill",type==='boy'?'#3498db':'#e74c3c'); svg.appendChild(c); });
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); line.setAttribute("points",lineD.replace(/M/,'')); line.setAttribute("stroke",type==='boy'?'#3498db':'#e74c3c'); line.setAttribute("stroke-width","2"); line.setAttribute("fill","none"); svg.appendChild(line); document.getElementById(cid).appendChild(svg);
-    }
-    function drawGrowthTable() {
-        const c = document.getElementById('growthTableContainer'); let h = '<table class="common-table"><thead><tr><th>年齢</th>'; growthData.boy.forEach(p=>h+=`<th>${p[0]}</th>`); h+='</tr></thead><tbody><tr><th>男子</th>'; growthData.boy.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr><tr><th>女子</th>'; growthData.girl.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr></tbody></table>'; c.innerHTML = h;
-    }
+    function calcSchwartz() { const h = parseFloat(document.getElementById('schHeight').value); const cr = parseFloat(document.getElementById('schCr').value); if(h && cr) document.getElementById('schResult').textContent = (0.35 * h / cr).toFixed(1); }
+    function drawGrowthChart(cid, type) { const w=300, h=250, pad=30; const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width","100%"); svg.setAttribute("height","100%"); svg.setAttribute("viewBox",`0 0 ${w} ${h}`); const d = growthData[type]; const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d",`M${pad},${pad} V${h-pad} H${w-pad}`); path.setAttribute("stroke","#333"); path.setAttribute("stroke-width","1"); path.setAttribute("fill","none"); svg.appendChild(path); let lineD = `M`; d.forEach((p,i)=>{ const x=pad+(p[0]/12)*(w-pad*2); const y=(h-pad)-(p[1]/50)*(h-pad*2); lineD+=`${i===0?'':','}${x} ${y}`; const c=document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx",x); c.setAttribute("cy",y); c.setAttribute("r",2); c.setAttribute("fill",type==='boy'?'#3498db':'#e74c3c'); svg.appendChild(c); }); const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); line.setAttribute("points",lineD.replace(/M/,'')); line.setAttribute("stroke",type==='boy'?'#3498db':'#e74c3c'); line.setAttribute("stroke-width","2"); line.setAttribute("fill","none"); svg.appendChild(line); document.getElementById(cid).appendChild(svg); }
+    function drawGrowthTable() { const c = document.getElementById('growthTableContainer'); let h = '<table class="common-table"><thead><tr><th>年齢</th>'; growthData.boy.forEach(p=>h+=`<th>${p[0]}</th>`); h+='</tr></thead><tbody><tr><th>男子</th>'; growthData.boy.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr><tr><th>女子</th>'; growthData.girl.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr></tbody></table>'; c.innerHTML = h; }
 </script>
 </body>
 </html>
