@@ -15,17 +15,20 @@
         {
           "start": 3,
           "end": 5,
-          "dose": 75
+          "dose": 75,
+          "isKg": false
         },
         {
           "start": 5,
           "end": 11,
-          "dose": 150
+          "dose": 150,
+          "isKg": false
         },
         {
           "start": 11,
           "end": 18,
-          "dose": 200
+          "dose": 200,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -34,7 +37,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アキネトン細粒",
@@ -46,7 +51,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アシクロビルDS80％",
@@ -59,7 +66,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アスパラカリウム散",
@@ -72,32 +81,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 90
+          "dose": 90,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 180
+          "dose": 180,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 250
+          "dose": 250,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 300
+          "dose": 300,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 450
+          "dose": 450,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 750
+          "dose": 750,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -105,7 +120,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アスピリン",
@@ -117,7 +134,9 @@
     "refs": [
       1
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アスベリン散",
@@ -130,27 +149,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 40
+          "dose": 40,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 50
+          "dose": 50,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -159,7 +183,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アドソルビン末",
@@ -172,32 +198,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 200
+          "dose": 200,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 600
+          "dose": 600,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 750
+          "dose": 750,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 1000
+          "dose": 1000,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 1500
+          "dose": 1500,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 2000
+          "dose": 2000,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -205,7 +237,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アドナ",
@@ -223,32 +257,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 5
+          "dose": 5,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 45
+          "dose": 45,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 60
+          "dose": 60,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -256,7 +296,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アルダクトンA細粒",
@@ -274,32 +316,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 12
+          "dose": 12,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 25
+          "dose": 25,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -308,7 +356,9 @@
       2,
       3
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アレジオンＤＳ",
@@ -326,7 +376,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アレビアチン散",
@@ -344,7 +396,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "イスコチン末",
@@ -363,7 +417,9 @@
       4,
       5
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ウインタミン細粒",
@@ -381,7 +437,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ウラリットＵ配合散",
@@ -394,7 +452,9 @@
       2,
       6
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ウルソ顆粒",
@@ -406,7 +466,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "エクセグラン散",
@@ -424,7 +486,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "エリスロシン DS",
@@ -442,7 +506,9 @@
       2,
       7
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "塩化アンモニウム",
@@ -457,7 +523,9 @@
     },
     "ageRule": null,
     "refs": [],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "塩化ナトリウム",
@@ -467,7 +535,9 @@
     "rule": null,
     "ageRule": null,
     "refs": [],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "オゼックス細粒",
@@ -485,7 +555,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "カルボシステインＤＳ",
@@ -503,7 +575,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "カロナール細粒",
@@ -521,7 +595,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "クラリスロマイシン DS",
@@ -540,7 +616,9 @@
       2,
       7
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ザジテン DS",
@@ -558,17 +636,20 @@
         {
           "start": 0.5,
           "end": 3,
-          "dose": 0.8
+          "dose": 0.8,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7,
-          "dose": 1.2
+          "dose": 1.2,
+          "isKg": false
         },
         {
           "start": 7,
           "end": 18,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -577,7 +658,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ジゴシン 1000 倍散",
@@ -590,7 +673,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "次硝酸ビスマス",
@@ -603,27 +688,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 400
+          "dose": 400,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 500
+          "dose": 500,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 650
+          "dose": 650,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 1000
+          "dose": 1000,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 1300
+          "dose": 1300,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -631,7 +721,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "アジスロマイシン細粒小児用",
@@ -649,7 +741,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "シナール顆粒",
@@ -659,7 +753,9 @@
     "rule": null,
     "ageRule": null,
     "refs": [],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "シンメトレル細粒",
@@ -669,7 +765,9 @@
     "rule": null,
     "ageRule": null,
     "refs": [],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "セパミット細粒",
@@ -686,7 +784,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ケフラール細粒",
@@ -705,7 +805,9 @@
       2,
       8
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "セフジニル細粒",
@@ -723,7 +825,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "セルシン散",
@@ -736,7 +840,9 @@
       1,
       9
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "バルプロ酸Ｎａ細粒",
@@ -753,7 +859,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "セレネース細粒",
@@ -766,7 +874,9 @@
       2,
       10
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ダイフェン細粒",
@@ -780,7 +890,9 @@
       2,
       11
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "タミフルＤＳ",
@@ -793,7 +905,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "炭酸水素 Na",
@@ -805,7 +919,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "タンナルビン",
@@ -818,32 +934,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 200
+          "dose": 200,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 600
+          "dose": 600,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 750
+          "dose": 750,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 1000
+          "dose": 1000,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 1500
+          "dose": 1500,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 2000
+          "dose": 2000,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -852,7 +974,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "チラーヂン S 散",
@@ -865,7 +989,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "テオドール DS",
@@ -883,7 +1009,9 @@
       2,
       12
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "デカドロン",
@@ -895,7 +1023,9 @@
     "refs": [
       1214
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "テグレトール細粒",
@@ -909,7 +1039,9 @@
       2,
       15
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ドパストン散",
@@ -921,7 +1053,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "乳酸 Ca 細粒",
@@ -934,32 +1068,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 0.2
+          "dose": 0.2,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 0.4
+          "dose": 0.4,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 0.5
+          "dose": 0.5,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 0.7
+          "dose": 0.7,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 1
+          "dose": 1,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 1.4
+          "dose": 1.4,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -969,7 +1109,9 @@
       16,
       17
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "パントシン散",
@@ -981,7 +1123,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ビオチン散",
@@ -998,7 +1142,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ビオフェルミン R 散",
@@ -1011,32 +1157,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 200
+          "dose": 200,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 600
+          "dose": 600,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 750
+          "dose": 750,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 1000
+          "dose": 1000,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 1500
+          "dose": 1500,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 2000
+          "dose": 2000,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1045,7 +1197,9 @@
       2,
       18
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ビソルボン細粒",
@@ -1058,32 +1212,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 1
+          "dose": 1,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 4
+          "dose": 4,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 6
+          "dose": 6,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1091,7 +1251,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ピラマイド",
@@ -1108,7 +1270,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "レボトミン細粒",
@@ -1118,7 +1282,9 @@
     "rule": null,
     "ageRule": null,
     "refs": [],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ピレチア細粒",
@@ -1131,17 +1297,20 @@
         {
           "start": 3,
           "end": 7.5,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 15
+          "dose": 15,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1150,7 +1319,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ファモチジン散",
@@ -1164,7 +1335,9 @@
       19,
       20
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "フェノバール散",
@@ -1181,7 +1354,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "フェロミア顆粒",
@@ -1199,32 +1374,38 @@
         {
           "start": 0,
           "end": 0.5,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 22
+          "dose": 22,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 24
+          "dose": 24,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 32
+          "dose": 32,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 50
+          "dose": 50,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 68
+          "dose": 68,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1234,7 +1415,9 @@
       30,
       31
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "プランルカストDS",
@@ -1252,7 +1435,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "フロセミド細粒",
@@ -1266,7 +1451,9 @@
       3,
       21
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "フロモックス小児用",
@@ -1283,7 +1470,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ベサコリン散",
@@ -1296,17 +1485,20 @@
         {
           "start": 3,
           "end": 7.5,
-          "dose": 15
+          "dose": 15,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1314,7 +1506,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ペリアクチン散",
@@ -1327,27 +1521,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 4
+          "dose": 4,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 6
+          "dose": 6,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 8
+          "dose": 8,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1355,7 +1554,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ベンザリン細粒",
@@ -1368,27 +1569,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 1.3
+          "dose": 1.3,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 1.5
+          "dose": 1.5,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 4
+          "dose": 4,
+          "isKg": false
         }
       ],
       "unit": 1
@@ -1397,7 +1603,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ホクナリン DS",
@@ -1409,7 +1617,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ホスミシン DS",
@@ -1427,7 +1637,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ホスリボン配合顆粒",
@@ -1444,7 +1656,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ポララミン散",
@@ -1457,27 +1671,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 1
+          "dose": 1,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 1.5
+          "dose": 1.5,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 4
+          "dose": 4,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1486,7 +1705,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "マーズレンS配合顆粒",
@@ -1498,7 +1719,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "マイスタン",
@@ -1516,7 +1739,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ミノサイクリン塩酸塩顆粒",
@@ -1533,7 +1758,9 @@
     "refs": [
       1
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ムコソルバン DS",
@@ -1551,7 +1778,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "メイアクト小児用",
@@ -1568,7 +1797,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "メジコン散",
@@ -1581,27 +1812,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 15
+          "dose": 15,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 45
+          "dose": 45,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1609,7 +1845,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ヨウ化カリウム",
@@ -1621,7 +1859,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ラックビー微粒Ｎ",
@@ -1634,27 +1874,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 6
+          "dose": 6,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 7.5
+          "dose": 7.5,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 15
+          "dose": 15,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1664,7 +1909,9 @@
       22,
       23
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "リザベン細粒",
@@ -1682,7 +1929,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "リスパダール細粒",
@@ -1695,7 +1944,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "リボトリール細粒",
@@ -1708,7 +1959,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "硫酸マグネシウム",
@@ -1720,7 +1973,9 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "レベチラセタムDS50％",
@@ -1733,7 +1988,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "レボフロキサシン細粒",
@@ -1751,7 +2008,9 @@
       1,
       5
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ロペミン細粒",
@@ -1769,7 +2028,9 @@
       1,
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ワイドシリン細粒",
@@ -1786,50 +2047,53 @@
     "refs": [
       2
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "ミヤBM細粒",
     "generic": "酪酸菌製剤",
     "yomi": "みやびーえむ　らくさんきんせいざい",
     "text": "新生児：4mg/日　0.5-1歳未満：12mg/日　1歳-3歳未満：14mg/日　3歳-7.5歳未満：20mg/日　7.5歳-12歳未満：30mg/日　12歳以上：40mg/日[2]\n2mg/kg/日　分3　(最大120mg/日)[25]\n1.8mg/kg/日　分3[18]",
-    "rule": {
-      "min": 1.8,
-      "max": 2,
-      "unit": 0,
-      "limitDay": 120
-    },
+    "rule": null,
     "ageRule": {
       "list": [
         {
           "start": 0.1,
           "end": 0.5,
-          "dose": 4
+          "dose": 4,
+          "isKg": false
         },
         {
           "start": 0.5,
           "end": 1,
-          "dose": 12
+          "dose": 12,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 14
+          "dose": 14,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 20
+          "dose": 20,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 30
+          "dose": 30,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 40
+          "dose": 40,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1839,7 +2103,9 @@
       18,
       24
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "モサプリド",
@@ -1857,27 +2123,32 @@
         {
           "start": 0.5,
           "end": 1,
-          "dose": 2
+          "dose": 2,
+          "isKg": false
         },
         {
           "start": 1,
           "end": 3,
-          "dose": 3
+          "dose": 3,
+          "isKg": false
         },
         {
           "start": 3,
           "end": 7.5,
-          "dose": 5
+          "dose": 5,
+          "isKg": false
         },
         {
           "start": 7.5,
           "end": 12,
-          "dose": 7.5
+          "dose": 7.5,
+          "isKg": false
         },
         {
           "start": 12,
           "end": 15,
-          "dose": 10
+          "dose": 10,
+          "isKg": false
         }
       ],
       "unit": 0
@@ -1887,7 +2158,9 @@
       19,
       20
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "六君子湯",
@@ -1904,7 +2177,9 @@
     "refs": [
       2527
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "大建中湯",
@@ -1921,7 +2196,9 @@
     "refs": [
       27
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
   },
   {
     "name": "その他の漢方",
@@ -1933,6 +2210,512 @@
     "refs": [
       28
     ],
-    "conc": 0
+    "conc": 0,
+    "type": 0,
+    "groupId": ""
+  },
+  {
+    "name": "アミカシン(小児)",
+    "generic": "アミカシン",
+    "yomi": "あみかしん",
+    "text": "小児(筋肉内・点滴静注共通)：1日 4～8mg（力価）/kg を1～2回に分けて投与。\n新生児・未熟児（点滴静注）：1回 6mg（力価）/kg を1日2回投与。\n備考：点滴静注の場合は30分～1時間かけて投与。",
+    "rule": {
+      "min": 4,
+      "max": 8,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "AMK"
+  },
+  {
+    "name": "アミカシン(新生児)",
+    "generic": "アミカシン",
+    "yomi": "あみかしん",
+    "text": "小児(筋肉内・点滴静注共通)：1日 4～8mg（力価）/kg を1～2回に分けて投与。\n新生児・未熟児（点滴静注）：1回 6mg（力価）/kg を1日2回投与。\n備考：点滴静注の場合は30分～1時間かけて投与。",
+    "rule": {
+      "min": 6,
+      "max": 6,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "AMK"
+  },
+  {
+    "name": "カルベニン",
+    "generic": "パニペネム\nベタミプロン",
+    "yomi": "かるべにん　ぱにぺねむ　べたみぷろん",
+    "text": "通常：1日 30～60mg（力価）/kg を3回に分割して点滴静注。\n重症・難治性：1日 100mg（力価）/kg まで増量し3～4回に分割投与可（上限は1日2g）。\n備考：30分以上かけて投与。",
+    "rule": {
+      "min": 30,
+      "max": 100,
+      "unit": 0,
+      "limitDay": 2000
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "PAPM/BP"
+  },
+  {
+    "name": "ダラシン",
+    "generic": "クリンダマイシン",
+    "yomi": "だらしん　くりんだまいしん",
+    "text": "通常：1日 15～25mg（力価）/kg を3～4回に分けて点滴静注。\n難治性・重症：1日 40mg（力価）/kg まで増量し3～4回に分けて投与可。\n備考：点滴静注は30分～1時間かけて投与。",
+    "rule": {
+      "min": 15,
+      "max": 40,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CLDM"
+  },
+  {
+    "name": "ゲンタシン",
+    "generic": "ゲンタマイシン",
+    "yomi": "げんたしん　げんたまいしん",
+    "text": "1回 2.0～2.5mg（力価）/kg を1日2～3回、筋肉内注射または点滴静注。\n備考：点滴静注は30分～2時間かけて注入。",
+    "rule": {
+      "min": 2,
+      "max": 2.5,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "GM"
+  },
+  {
+    "name": "シプロキサン",
+    "generic": "シプロフロキサシン",
+    "yomi": "しぷろきさん　しぷろふろきさしん",
+    "text": "複雑性膀胱炎、腎盂腎炎：1回 6～10mg/kg を1日3回点滴静注。\n炭疽：1回 10mg/kg を1日2回点滴静注。\n嚢胞性線維症（緑膿菌）：1回 10mg/kg を1日3回点滴静注。\n備考：いずれも1回量の上限は400mg。1時間かけて投与。",
+    "rule": {
+      "min": 6,
+      "max": 10,
+      "unit": 1,
+      "limitDay": 1200
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CPFX"
+  },
+  {
+    "name": "セファメジン",
+    "generic": "セファゾリン",
+    "yomi": "せふぁめじん　せふぁぞりん",
+    "text": "通常：1日 20～40mg（力価）/kg を2回に分けて静脈内（緩徐）または筋肉内注射。\n効果不十分な場合：1日 50mg（力価）/kg を3回に分割投与。\n重篤な場合：1日 100mg（力価）/kg まで分割投与可。",
+    "rule": {
+      "min": 20,
+      "max": 100,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CEZ"
+  },
+  {
+    "name": "セフォセフ",
+    "generic": "スルバクタム\nセフォペラゾン",
+    "yomi": "せふぉせふ　するぺらぞん　するばくたむ　せふぉぺらぞん",
+    "text": "通常：1日 40～80mg（力価）/kg を2～4回に分けて静脈内注射。\n難治性・重症：1日 160mg（力価）/kg まで増量し2～4回に分割投与可。",
+    "rule": {
+      "min": 40,
+      "max": 160,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "SBT/CPZ"
+  },
+  {
+    "name": "モダシン（小児）",
+    "generic": "セフタジジム",
+    "yomi": "もだしん　せふたじじむ",
+    "text": "小児\n    通常：1日 40～100mg（力価）/kg を2～4回に分割し静脈内注射。\n    難治性・重症：1日 150mg（力価）/kg まで増量し2～4回に分割投与可。\n未熟児・新生児\n    生後0～3日齢：1回 20mg（力価）/kg を1日2～3回。\n    生後4日齢以降：1回 20mg（力価）/kg を1日3～4回。\n    難治性・重症：1日 150mg（力価）/kg まで増量し2～4回に分割投与可。",
+    "rule": {
+      "min": 40,
+      "max": 150,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CAZ"
+  },
+  {
+    "name": "モダシン（新生児）",
+    "generic": "セフタジジム",
+    "yomi": "もだしん　せふたじじむ",
+    "text": "小児\n    通常：1日 40～100mg（力価）/kg を2～4回に分割し静脈内注射。\n    難治性・重症：1日 150mg（力価）/kg まで増量し2～4回に分割投与可。\n未熟児・新生児\n    生後0～3日齢：1回 20mg（力価）/kg を1日2～3回。\n    生後4日齢以降：1回 20mg（力価）/kg を1日3～4回。\n    難治性・重症：1日 150mg（力価）/kg まで増量し2～4回に分割投与可。",
+    "rule": {
+      "min": 20,
+      "max": 20,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CAZ"
+  },
+  {
+    "name": "ロセフィン(小児)",
+    "generic": "セフトリアキソン",
+    "yomi": "ろせふぃん　せふとりあきそん",
+    "text": "小児\n    通常：1日 20～60mg（力価）/kg を1回又は2回に分けて静脈内注射又は点滴静注。\n    難治性・重症：1日 120mg（力価）/kg まで増量し2回に分けて投与可。\n低出生体重児・新生児\n    生後0～3日齢：1回 20mg（力価）/kg を1日1回。\n    生後4日齢以降：1回 20mg（力価）/kg を1日2回。\n    難治性・重症：1回 40mg（力価）/kg まで増量し1日2回投与可（生後2週間以内は1日50mg/kgまで）。",
+    "rule": {
+      "min": 20,
+      "max": 120,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CTRX"
+  },
+  {
+    "name": "ロセフィン(新生児)",
+    "generic": "セフトリアキソン",
+    "yomi": "ろせふぃん　せふとりあきそん",
+    "text": "小児\n    通常：1日 20～60mg（力価）/kg を1回又は2回に分けて静脈内注射又は点滴静注。\n    難治性・重症：1日 120mg（力価）/kg まで増量し2回に分けて投与可。\n低出生体重児・新生児\n    生後0～3日齢：1回 20mg（力価）/kg を1日1回。\n    生後4日齢以降：1回 20mg（力価）/kg を1日2回。\n    難治性・重症：1回 40mg（力価）/kg まで増量し1日2回投与可（生後2週間以内は1日50mg/kgまで）。",
+    "rule": {
+      "min": 20,
+      "max": 40,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": {
+      "list": [
+        {
+          "start": 0,
+          "end": 0.04,
+          "dose": 50,
+          "isKg": false
+        }
+      ],
+      "unit": 1
+    },
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CTRX"
+  },
+  {
+    "name": "セフメタゾン",
+    "generic": "セフメタゾール",
+    "yomi": "せふめたぞん　せふめたぞーる",
+    "text": "通常：1日 25～100mg（力価）/kg を2～4回に分けて静脈内注射または点滴静注。\n難治性・重症：1日 150mg（力価）/kg まで増量し2～4回に分割投与可。",
+    "rule": {
+      "min": 25,
+      "max": 150,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CMZ"
+  },
+  {
+    "name": "タゾピペ",
+    "generic": "タゾバクタム\nピペラシリン",
+    "yomi": "ぞしん　たぞぴぺ　たぞばくたむ　ぴぺらしりん",
+    "text": "肺炎・敗血症等：1回 112.5mg（力価）/kg を1日3回点滴静注。\n腎盂腎炎・複雑性膀胱炎：1回 112.5mg（力価）/kg を1日2回点滴静注（状況により3回可）。\n発熱性好中球減少症：1回 90mg（力価）/kg を1日4回点滴静注。\n備考：1回投与量の上限は成人の4.5gを超えないこと。",
+    "rule": {
+      "min": 90,
+      "max": 112.5,
+      "unit": 1,
+      "limitDay": 13500
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "TAZ/PIPC"
+  },
+  {
+    "name": "チエナム",
+    "generic": "イミペネム\nシラスタチン",
+    "yomi": "ちえなむ　いみぺねむ　しらすたちん",
+    "text": "通常：1日 30～80mg（力価）/kg を3～4回に分割し、30分以上かけて点滴静注。\n重症・難治性：1日 100mg（力価）/kg まで増量可。",
+    "rule": {
+      "min": 30,
+      "max": 100,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "IPM/CS"
+  },
+  {
+    "name": "ビクシリン(小児)",
+    "generic": "アンピシリン",
+    "yomi": "びくしりん　あんぴしりん",
+    "text": "小児：1日 100～200mg（力価）/kg を3～4回に分けて静脈内注射。上限は1日400mg/kg。\n新生児：1日 50～200mg（力価）/kg を2～4回に分けて静脈内注射。",
+    "rule": {
+      "min": 100,
+      "max": 200,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "ABPC"
+  },
+  {
+    "name": "ビクシリン(新生児)",
+    "generic": "アンピシリン",
+    "yomi": "びくしりん　あんぴしりん",
+    "text": "小児：1日 100～200mg（力価）/kg を3～4回に分けて静脈内注射。上限は1日400mg/kg。\n新生児：1日 50～200mg（力価）/kg を2～4回に分けて静脈内注射。",
+    "rule": {
+      "min": 50,
+      "max": 200,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": ""
+  },
+  {
+    "name": "フルマリン(小児)",
+    "generic": "フロモキセフ",
+    "yomi": "ふるまりん　ふろもきせふ",
+    "text": "小児\n    通常：1日 60～80mg（力価）/kg を3～4回に分割して投与。\n未熟児・新生児\n    生後3日まで：1回 20mg（力価）/kg を1日2～3回。\n    生後4日以降：1回 20mg（力価）/kg を1日3～4回。\n難治性・重症（小児・新生児共通）\n    1日 150mg（力価）/kg まで増量し3～4回に分割投与可。",
+    "rule": {
+      "min": 60,
+      "max": 150,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": ""
+  },
+  {
+    "name": "フルマリン(新生児)",
+    "generic": "フロモキセフ",
+    "yomi": "ふるまりん　ふろもきせふ",
+    "text": "小児\n    通常：1日 60～80mg（力価）/kg を3～4回に分割して投与。\n未熟児・新生児\n    生後3日まで：1回 20mg（力価）/kg を1日2～3回。\n    生後4日以降：1回 20mg（力価）/kg を1日3～4回。\n難治性・重症（小児・新生児共通）\n    1日 150mg（力価）/kg まで増量し3～4回に分割投与可。",
+    "rule": {
+      "min": 20,
+      "max": 20,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "FMOX"
+  },
+  {
+    "name": "ペントシリン",
+    "generic": "ピペラシリン",
+    "yomi": "ぺんとしりん　ぴぺらしりん",
+    "text": "通常：1日 50～125mg（力価）/kg を2～4回に分けて静脈内投与。\n難治性・重症：1日 300mg（力価）/kg まで増量し3回に分けて投与可（1回上限は成人の4g）。",
+    "rule": {
+      "min": 50,
+      "max": 300,
+      "unit": 0,
+      "limitDay": 12000
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "PIPC"
+  },
+  {
+    "name": "ホスミシンS",
+    "generic": "ホスホマイシン",
+    "yomi": "ほすみしんえす　ほすほまいしん",
+    "text": "点滴静注：1日 100～200mg（力価）/kg を2回に分け、1～2時間かけて投与。\n静脈内注射：1日 100～200mg（力価）/kg を2～4回に分け、5分以上かけてゆっくり投与。",
+    "rule": {
+      "min": 100,
+      "max": 200,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "FOM"
+  },
+  {
+    "name": "メロペン",
+    "generic": "メロペネム",
+    "yomi": "めろぺん　めろぺねむ",
+    "text": "一般感染症：1日 30～60mg（力価）/kg を3回に分割して点滴静注（重症は120mg/kgまで増量可、上限3g/日）。\n化膿性髄膜炎：1日 120mg（力価）/kg を3回に分割して点滴静注（上限6g/日）。\n発熱性好中球減少症：1日 120mg（力価）/kg を3回に分割して点滴静注（上限3g/日）。",
+    "rule": {
+      "min": 30,
+      "max": 120,
+      "unit": 0,
+      "limitDay": 3000
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "MEPM"
+  },
+  {
+    "name": "ユナスピン",
+    "generic": "スルバクタム\nアンピシリン",
+    "yomi": "ゆなすぴん　するばくたむ　あんぴしりん",
+    "text": "1日 60～150mg（力価）/kg を3～4回に分けて静脈内注射または点滴静注。",
+    "rule": {
+      "min": 60,
+      "max": 150,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "SBT/ABPC"
+  },
+  {
+    "name": "セフォタックス",
+    "generic": "せふぉたきしむ",
+    "yomi": "せふぉたっくす　くらふぉらん　せふぉたきしむ",
+    "text": "通常：1日 50～100mg（力価）/kg を3～4回に分けて静脈内に注射。\n難治性・重症：1日 150mg（力価）/kg まで増量し3～4回に分割投与可。\n化膿性髄膜炎：1日 300mg（力価）/kg まで増量可。\n備考：静脈内注射（緩徐）または点滴静注。",
+    "rule": {
+      "min": 50,
+      "max": 300,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "CTX"
+  },
+  {
+    "name": "バンコマイシン(小児)",
+    "generic": "バンコマイシン",
+    "yomi": "ばんこまいしん",
+    "text": "TDM対象\n小児・乳児：1日40mg（力価）/kgを2～4回に分割。 \n新生児：1回10～15mg（力価）/kg（生後1週内は12時間毎、1ヶ月内は8時間毎）。 \n備考：それぞれ60分以上かけて点滴静注。",
+    "rule": {
+      "min": 40,
+      "max": 40,
+      "unit": 0,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "VCM"
+  },
+  {
+    "name": "バンコマイシン(新生児)",
+    "generic": "バンコマイシン",
+    "yomi": "ばんこまいしん",
+    "text": "TDM対象\n小児・乳児：1日40mg（力価）/kgを2～4回に分割。 \n新生児：1回10～15mg（力価）/kg（生後1週内は12時間毎、1ヶ月内は8時間毎）。 \n備考：それぞれ60分以上かけて点滴静注。",
+    "rule": {
+      "min": 10,
+      "max": 15,
+      "unit": 1,
+      "limitDay": null
+    },
+    "ageRule": null,
+    "refs": [
+      1
+    ],
+    "conc": 0,
+    "type": 1,
+    "groupId": "VCM"
   }
 ]
