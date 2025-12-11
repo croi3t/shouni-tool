@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小児用量監査ツール V20</title>
+    <title>小児用量監査ツール V27 (Fixed Tab & Width)</title>
     <style>
         /* --- 基本設定 --- */
         :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; --inj-color: #8e44ad; }
         body { font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
+        
+        /* ヘッダー */
         header { background: var(--primary); color: #fff; padding: 15px 0; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.4rem; }
         
-        /* タブ */
-        .tab-nav { display: flex; justify-content: center; background: #34495e; padding: 0; list-style: none; margin: 0; flex-wrap: wrap; }
+        /* タブ (スクロール追従設定を追加) */
+        .tab-nav { 
+            display: flex; justify-content: center; background: #34495e; padding: 0; list-style: none; margin: 0; flex-wrap: wrap;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* 追加: 固定表示と影 */
+        }
         .tab-nav li { cursor: pointer; padding: 12px 15px; color: #bdc3c7; transition: 0.3s; border-bottom: 4px solid transparent; font-weight: bold; font-size: 0.9rem; }
         .tab-nav li:hover { color: #fff; background: #3e5871; }
         .tab-nav li.active { color: #fff; border-bottom-color: var(--accent); background: #2c3e50; }
         .tab-nav li[data-tab="tab-inj"].active { border-bottom-color: var(--inj-color); }
 
-        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; }
+        /* コンテナ幅を1400pxに拡張 */
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
+        
         .tab-content { display: none; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -26,12 +33,21 @@
         /* パネル・入力 */
         .panel { background: #eef2f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dce4ec; }
         .inj-mode .panel { background: #f3e5f5; border-color: #e1bee7; }
-        .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 180px; }
+        
+        /* 入力欄の位置合わせ修正: flex-end -> flex-start */
+        .row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; align-items: flex-start; }
+        .col { flex: 1; min-width: 150px; }
+        
         label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); font-size: 0.95rem; }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; transition: all 0.3s; }
         input:disabled { background: #e9ecef; }
         
+        /* 年齢入力補助ボタン */
+        .age-helper-btn { background: #607d8b; color: white; border: none; padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; margin-top: 5px; display: block; width: 100%; }
+        .age-helper-popup { display: none; background: #fff; border: 1px solid #ccc; padding: 10px; position: absolute; z-index: 200; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 5px; width: 280px; margin-top: 5px; }
+        .age-helper-row { display: flex; gap: 5px; align-items: center; margin-bottom: 8px; }
+        .age-helper-row input { width: 60px; padding: 5px; text-align: right; }
+
         /* 検索リスト */
         .search-container { position: relative; }
         .drug-list { list-style: none; padding: 0; margin: 0; position: absolute; width: 100%; max-height: 300px; overflow-y: auto; background: #fff; border: 1px solid #ddd; z-index: 100; display: none; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
@@ -61,8 +77,14 @@
         .audit-danger { background: #fbe9e7; border-left-color: var(--danger); color: #b71c1c; }
         .audit-check { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
         
-        /* 推奨量表示エリア (V19) */
+        /* 推奨量表示エリア */
         .guideline-area { background: #eef2f5; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ddd; font-weight:bold; color:#2c3e50; }
+
+        .detail-result { font-size: 0.95rem; margin-top: 10px; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 4px; }
+        .badge-mini { display: inline-block; padding: 2px 6px; font-size: 0.8rem; border-radius: 4px; color: white; margin-right: 5px; vertical-align: middle; }
+        .bg-green { background: var(--success); }
+        .bg-red { background: var(--danger); }
+        .bg-gray { background: #95a5a6; }
 
         .original-text { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; color: #444; line-height: 1.8; font-family: inherit; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; }
         
@@ -76,6 +98,7 @@
         /* その他 */
         .liquid-switch { display:none; align-items:center; margin-top:5px; font-size:0.9rem; color:#2c3e50; font-weight:bold; }
         .liquid-switch input { width:auto; margin-right:5px; transform:scale(1.2); }
+        
         .ref-links a { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: var(--accent); text-decoration: none; background: #f0f8ff; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
         .ref-links a:hover { background: var(--accent); color: #fff; }
         .ref-nolink { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: #666; background: #f5f5f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.9rem; }
@@ -93,17 +116,22 @@
 
         /* 資料タブ */
         h2 { border-left: 5px solid var(--accent); padding-left: 10px; color: var(--primary); margin-top: 30px; font-size: 1.3rem; }
-        .chart-container { width: 100%; height: 350px; position: relative; margin-bottom: 20px; border: 1px solid #eee; }
+        .chart-container { width: 100%; height: 400px; position: relative; margin-bottom: 20px; border: 1px solid #eee; background: #fff; }
         .formula-box { background: #fdfdfd; border: 1px solid #eee; padding: 15px; border-radius: 5px; margin-bottom: 15px; height: 100%; }
         .formula-title { font-weight: bold; color: var(--accent); margin-bottom: 5px; }
         .formula-math { font-family: "Times New Roman", serif; font-size: 1.2rem; background: #eee; padding: 10px; text-align: center; border-radius: 4px; margin: 10px 0; }
+        .calc-area { background:#f0f0f0; padding:10px; border-radius:4px; margin-top:10px; }
+        .source-note { font-size: 0.8rem; color: #666; text-align: right; margin-top: 5px; }
+        
         table.common-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-top: 10px; }
         table.common-table th, table.common-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; }
         table.common-table th { background: #f2f2f2; color: var(--primary); font-weight: bold; }
         table.common-table tr:nth-child(even) td { background: #fafafa; }
-        #growthTableContainer { overflow-x: auto; margin-bottom: 30px; }
+        
+        #growthTableContainer { overflow-x: auto; margin-bottom: 10px; }
         #growthTableContainer table { min-width: 600px; }
         #growthTableContainer th:first-child, #growthTableContainer td:first-child { background: #eef2f5; font-weight: bold; width: 80px; position: sticky; left: 0; z-index: 10; border-right: 2px solid #ddd; }
+        
         .harnack-table th { text-align: left; padding-left: 15px; width: 40%; }
         .harnack-table td { text-align: left; padding-left: 15px; }
     </style>
@@ -114,7 +142,7 @@
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
                 document.querySelectorAll('.tab-nav li').forEach(e => e.classList.remove('active'));
                 const target = document.getElementById(id); if(target) target.classList.add('active');
-                const idx = {'tab-calc':0, 'tab-knowledge':1, 'tab-settings':2}[id];
+                const idx = {'tab-oral':0, 'tab-inj':1, 'tab-knowledge':2, 'tab-settings':3}[id];
                 const navItems = document.querySelectorAll('.tab-nav li'); if(navItems[idx]) navItems[idx].classList.add('active');
             } catch(e) { console.error("Tab Error:", e); }
         }
@@ -127,7 +155,7 @@
 <body>
 
 <header>
-    <h1>💊 小児用量監査ツール V20</h1>
+    <h1>💊 小児用量監査ツール V27</h1>
 </header>
 
 <div id="errorBanner"></div>
@@ -154,7 +182,22 @@
             </div>
             <div class="row">
                 <div class="col"><label>体重 (kg)</label><input type="number" id="weightOral" step="0.1" placeholder="15.5" oninput="runAudit('Oral')"></div>
-                <div class="col"><label>年齢 (歳)</label><input type="number" id="ageOral" step="0.1" placeholder="3" oninput="runAudit('Oral')"></div>
+                <div class="col" style="position:relative;">
+                    <label>年齢 (歳)</label>
+                    <input type="number" id="ageOral" step="0.01" placeholder="3" oninput="runAudit('Oral')">
+                    <button class="age-helper-btn" onclick="toggleAgeHelper('Oral')">👶 月齢/日齢入力</button>
+                    <div id="ageHelperOral" class="age-helper-popup">
+                        <div class="age-helper-row">
+                            <label style="width:50px;">月齢:</label> <input type="number" id="helperMonthOral" placeholder="0"> ヶ月
+                        </div>
+                        <div class="age-helper-row">
+                            <label style="width:50px;">日齢:</label> <input type="number" id="helperDayOral" placeholder="0"> 日
+                        </div>
+                        <div style="text-align:right;">
+                            <button class="btn-action" style="font-size:0.8rem; padding:5px; background:#3498db; width:auto;" onclick="applyAgeHelper('Oral')">反映</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="col">
                     <label id="doseLabelOral">処方量</label>
                     <input type="number" id="doseInputOral" placeholder="入力" oninput="runAudit('Oral')" disabled>
@@ -196,7 +239,22 @@
             </div>
             <div class="row">
                 <div class="col"><label>体重 (kg)</label><input type="number" id="weightInj" step="0.1" placeholder="15.5" oninput="runAudit('Inj')"></div>
-                <div class="col"><label>年齢 (歳)</label><input type="number" id="ageInj" step="0.1" placeholder="3" oninput="runAudit('Inj')"></div>
+                <div class="col" style="position:relative;">
+                    <label>年齢 (歳)</label>
+                    <input type="number" id="ageInj" step="0.01" placeholder="3" oninput="runAudit('Inj')">
+                    <button class="age-helper-btn" style="background:#9b59b6;" onclick="toggleAgeHelper('Inj')">👶 月齢/日齢入力</button>
+                    <div id="ageHelperInj" class="age-helper-popup">
+                        <div class="age-helper-row">
+                            <label style="width:50px;">月齢:</label> <input type="number" id="helperMonthInj" placeholder="0"> ヶ月
+                        </div>
+                        <div class="age-helper-row">
+                            <label style="width:50px;">日齢:</label> <input type="number" id="helperDayInj" placeholder="0"> 日
+                        </div>
+                        <div style="text-align:right;">
+                            <button class="btn-action" style="font-size:0.8rem; padding:5px; background:#8e44ad; width:auto;" onclick="applyAgeHelper('Inj')">反映</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="col">
                     <label id="doseLabelInj">処方量</label>
                     <input type="number" id="doseInputInj" placeholder="入力" oninput="runAudit('Inj')" disabled>
@@ -226,12 +284,15 @@
     </div>
 
     <div id="tab-knowledge" class="tab-content">
-        <h2>📊 身体発育曲線</h2>
+        <h2>📊 身体発育曲線 (0-12歳)</h2>
         <div class="row">
-            <div class="col"><h3 style="text-align:center; color:#e74c3c;">女子</h3><div id="chartGirl" class="chart-container"></div></div>
-            <div class="col"><h3 style="text-align:center; color:#3498db;">男子</h3><div id="chartBoy" class="chart-container"></div></div>
+            <div class="col"><h3 style="text-align:center; color:#e74c3c; margin:0 0 10px 0;">女子 (Girls)</h3><div id="chartGirl" class="chart-container"></div></div>
+            <div class="col"><h3 style="text-align:center; color:#3498db; margin:0 0 10px 0;">男子 (Boys)</h3><div id="chartBoy" class="chart-container"></div></div>
         </div>
+        
+        <h3>📈 日本人小児の平均体重一覧表 (kg)</h3>
         <div id="growthTableContainer"></div>
+        <div class="source-note">出典：厚生労働省 乳幼児身体発育調査（平成22年）、学校保健統計調査（平成30年）等に基づく概算値</div>
         
         <h2>🧮 計算式</h2>
         <div class="row">
@@ -239,10 +300,11 @@
                 <div class="formula-box">
                     <div class="formula-title">Augsberger式 II</div>
                     <div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div>
-                    <div style="background:#f0f0f0; padding:10px;">
-                        成人: <input type="number" id="augAdult" style="width:70px;">mg × 体重: <input type="number" id="augWeight" style="width:70px;">kg 
-                        <button onclick="calcAugsberger()">計算</button> = <span id="augResult">---</span>mg
+                    <div class="calc-area">
+                        成人: <input type="number" id="augAdult" style="width:100px;">mg × 体重: <input type="number" id="augWeight" style="width:100px;">kg 
+                        <button onclick="calcAugsberger()">計算</button> = <span id="augResult" style="font-weight:bold;">---</span> mg
                     </div>
+                    <div class="source-note">出典：Augsberger A: Triangle, 5: 200, 1962</div>
                 </div>
             </div>
             <div class="col">
@@ -250,20 +312,49 @@
                     <div class="formula-title">Schwartzの式 (eGFR推算)</div>
                     <div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div>
                     <div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div>
-                    <div style="background:#f0f0f0; padding:10px;">
-                        身長: <input type="number" id="schHeight" style="width:60px;">cm / Cr: <input type="number" id="schCr" style="width:60px;">
-                        <button onclick="calcSchwartz()">計算</button> = <span id="schResult">---</span>
+                    <div class="calc-area">
+                         身長: <input type="number" id="schHeight" style="width:100px;">cm / Cr: <input type="number" id="schCr" style="width:100px;">
+                        <button onclick="calcSchwartz()">計算</button> = <span id="schResult" style="font-weight:bold;">---</span>
                     </div>
+                    <div class="source-note">出典：Schwartz GJ: Pediatrics, 58: 252, 1976</div>
                 </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                <div class="formula-box"><div class="formula-title">Von Harnack表</div><table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6M)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6M~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table></div>
+                <div class="formula-box">
+                    <div class="formula-title">Von Harnack表 (簡易計算)</div>
+                    <div class="calc-area">
+                         成人: <input type="number" id="harAdult" style="width:100px;">mg × 年齢: <input type="number" id="harAge" style="width:100px;">歳
+                        <button onclick="calcHarnack()">計算</button> = <span id="harResult" style="font-weight:bold;">---</span> mg
+                    </div>
+                    <table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6ヶ月)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6ヶ月~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table>
+                    <div class="source-note">出典：von Harnack GA: Arzneimitteldosierung im Kindesalter, 1965</div>
+                </div>
             </div>
             <div class="col">
-                <div class="formula-box"><div class="formula-title">Young / Crawford</div><div style="font-size:0.9rem;">Young: 成人量 × 年齢 / (年齢+12)</div><hr style="border:0; border-top:1px solid #ddd; margin:15px 0;"><div style="font-size:0.9rem;">Crawford: 成人量 × 体表面積(m²) / 1.73</div></div>
+                <div class="formula-box">
+                    <div class="formula-title">Young式</div>
+                    <div class="formula-math">小児量 = 成人量 × 年齢 / ( 年齢 + 12 )</div>
+                    <div class="calc-area">
+                         成人: <input type="number" id="yngAdult" style="width:100px;">mg × 年齢: <input type="number" id="yngAge" style="width:100px;">歳
+                        <button onclick="calcYoung()">計算</button> = <span id="yngResult" style="font-weight:bold;">---</span> mg
+                    </div>
+                    <div class="source-note">出典：Young T: An Introduction to Medical Literature, London, 1813</div>
+                    
+                    <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
+                    
+                    <div class="formula-title">Crawford式</div>
+                    <div class="formula-math">小児量 = 成人量 × 体表面積(m²) / 1.73</div>
+                    <div class="calc-area">
+                        成人: <input type="number" id="crawAdult" style="width:100px;">mg <br>
+                        身長: <input type="number" id="crawHt" style="width:100px;">cm / 体重: <input type="number" id="crawWt" style="width:100px;">kg
+                        <button onclick="calcCrawford()">計算</button><br>
+                        BSA: <span id="crawBSA">---</span> m² → <span id="crawResult" style="font-weight:bold;">---</span> mg
+                    </div>
+                    <div class="source-note">出典：Crawford JD: Pediatrics, 6: 78, 1950<br>BSA計算: DuBois式を使用</div>
+                </div>
             </div>
         </div>
     </div>
@@ -274,6 +365,8 @@
         <div style="background:#e3f2fd; padding:15px; border-left:5px solid #2196f3; margin-bottom:15px; font-size:0.9rem;">
             <strong>📝 Excel貼り付け列順 (全13列):</strong><br>
             [1]商品 [2]一般 [3]よみ [4]文 [5]最小 [6]最大 [7]単位 [8]上限 [9]参照 [10]年齢ルール [11]濃度 [12]区分 [13]グループID
+            <br><br>
+            <span style="color:#d35400;">※注意: 注射薬として認識させるには、[12]区分列に「1」を入力してください。[11]濃度も入力するとmL計算が可能になります。</span>
         </div>
         <textarea id="pasteArea" rows="12" placeholder="ここにExcelを貼り付け..."></textarea>
         <div style="display:flex; gap:10px; margin-top:15px;">
@@ -303,14 +396,14 @@
             { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } }
         ],
         "デカドロン": [
-            { label: "喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
-            { label: "クループ: 0.15-0.6mg/kg/回", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成: 0.5mg/日", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
+            { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } },
+            { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } },
+            { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
         ],
         "デキサメタゾン": [
-            { label: "喘息: 0.2-0.3mg/kg/回", rule: { min:0.2, max:0.3, unit:1 } },
-            { label: "クループ: 0.15-0.6mg/kg/回", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成: 0.5mg/日", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
+            { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } },
+            { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } },
+            { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
         ]
     };
 
@@ -320,10 +413,13 @@
         { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
         { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
         { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
-        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }
+        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
+        { key: "シプロフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
+        { key: "ノルフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
+        { key: "プロポフォール", limitAge: 100, msg: "⚠️【小児】集中治療における鎮静は禁忌(プロポフォール注入症候群)" }
     ];
 
-    const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬量量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"IWK Health Neonatal Guidelines",url:"https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo"} };
+    const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬用量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"IWK Health Neonatal Guidelines",url:"https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo"} };
     const growthData = { boy: [[0,3.0],[1,9.6],[2,12.5],[3,14.6],[4,16.7],[5,18.9],[6,21.4],[7,24.1],[8,27.2],[9,30.6],[10,34.2],[11,38.2],[12,42.5]], girl: [[0,3.0],[1,8.9],[2,11.8],[3,14.0],[4,16.2],[5,18.5],[6,20.9],[7,23.6],[8,26.5],[9,30.0],[10,33.8],[11,38.0],[12,42.0]] };
 
     window.onload = function() {
@@ -362,15 +458,36 @@
     }
     setupSearch('Oral'); setupSearch('Inj');
 
+    function toggleAgeHelper(type) {
+        const popup = document.getElementById(`ageHelper${type}`);
+        popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+    }
+    
+    function applyAgeHelper(type) {
+        const m = parseFloat(document.getElementById(`helperMonth${type}`).value) || 0;
+        const d = parseFloat(document.getElementById(`helperDay${type}`).value) || 0;
+        if(m === 0 && d === 0) return;
+        const age = (m / 12) + (d / 365);
+        document.getElementById(`age${type}`).value = age.toFixed(3);
+        document.getElementById(`ageHelper${type}`).style.display = 'none';
+        document.getElementById(`helperMonth${type}`).value = '';
+        document.getElementById(`helperDay${type}`).value = '';
+        runAudit(type);
+    }
+
     function selectDrug(drug, type) {
-        if (type === 'Oral') { currentOralDrug = drug; currentOralRule = drug; } else { currentInjDrug = drug; currentInjRule = drug; }
+        if (type === 'Oral') { currentOralDrug = drug; currentOralRule = drug; } 
+        else { currentInjDrug = drug; currentInjRule = drug; }
+        
         document.getElementById(`searchBox${type}`).value = drug.name;
         document.getElementById(`drugList${type}`).style.display = 'none';
         document.getElementById(`doseInput${type}`).disabled = false;
         document.getElementById(`resultCard${type}`).style.display = 'block';
+        
         document.getElementById(`resName${type}`).textContent = drug.name;
         document.getElementById(`resGeneric${type}`).textContent = drug.generic;
-        document.getElementById(`resPedsText${type}`).textContent = drug.text;
+        document.getElementById(`resPedsText${type}`).textContent = drug.text || "（添付文書等の記載なし）";
+        updateRefs(drug, type);
 
         const liqSwitch = document.getElementById(`liquidSwitch${type}`);
         document.getElementById(`isLiquidInput${type}`).checked = false;
@@ -413,42 +530,43 @@
                 const btn = document.createElement('button');
                 btn.className = "scenario-btn";
                 btn.textContent = s.label;
-		btn.onclick = () => {
-		    Array.from(optsDiv.children).forEach(c => c.classList.remove('active'));
-		    btn.classList.add('active');
-		
-		    // 【修正1】データを勝手に加工せず、そのまま使う
-		    const selectedRule = s; 
-		
-		    // 【修正2】データセットに名前やテキストが含まれている場合（注射薬やグループID持ち）は表示を更新する
-		    // デカドロン等の特殊ルールはテキストを持っていないため、元のテキストを維持する
-		    if(selectedRule.name && selectedRule.text){
-		        document.getElementById(`resName${type}`).textContent = selectedRule.name;
-		        document.getElementById(`resPedsText${type}`).textContent = selectedRule.text;
-		        updateRefs(selectedRule, type);
-		    }
-    applyRule(selectedRule, type); 
-    runAudit(type); 
-};
+                btn.onclick = () => {
+                    Array.from(optsDiv.children).forEach(c => c.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const selectedRule = s.rule ? s.rule : s;
+                    if(drug.groupId){
+                        document.getElementById(`resName${type}`).textContent = s.name;
+                        document.getElementById(`resPedsText${type}`).textContent = s.text || "（記載なし）";
+                        updateRefs(s, type);
+                    }
+                    applyRule(selectedRule, type);
+                    runAudit(type); 
+                };
                 if (idx === 0) btn.click();
                 optsDiv.appendChild(btn);
             });
         } else {
             scenDiv.style.display = 'none';
             applyRule(drug, type);
-            updateRefs(drug, type);
         }
         runAudit(type);
     }
 
     function updateRefs(drug, type) {
-        const refDiv = document.getElementById(`refLinksContainer${type}`); refDiv.innerHTML = '';
+        const refDiv = document.getElementById(`refLinksContainer${type}`); 
+        refDiv.innerHTML = '';
         document.getElementById(`refArea${type}`).style.display = (drug.refs && drug.refs.length > 0) ? 'block' : 'none';
-        if(drug.refs) drug.refs.forEach(id => {
-            const d = dbRefs[id]; const a = document.createElement('a'); a.textContent = `[${id}] ${d ? d.title : '文献'}`;
-            if (d && d.url) { a.href = d.url; a.target = "_blank"; } else { a.className = 'ref-nolink'; }
-            refDiv.appendChild(a);
-        });
+        if(drug.refs && drug.refs.length > 0) {
+            drug.refs.forEach(id => {
+                const d = dbRefs[id]; 
+                const a = document.createElement('a'); 
+                a.textContent = `[${id}] ${d ? d.title : '文献'}`;
+                if (d && d.url) { a.href = d.url; a.target = "_blank"; } 
+                else { a.className = 'ref-nolink'; }
+                refDiv.appendChild(a);
+            });
+        }
     }
 
     function applyRule(data, type) {
@@ -456,8 +574,10 @@
         const badge = document.getElementById(`auditTypeBadge${type}`);
         const doseLabel = document.getElementById(`doseLabel${type}`);
         const inputField = document.getElementById(`doseInput${type}`);
+        
         let unit = 0;
-        if (data.ageRule) unit = data.ageRule.unit; else if (data.rule) unit = data.rule.unit;
+        if (data.ageRule) unit = data.ageRule.unit; 
+        else if (data.rule) unit = data.rule.unit;
 
         if (data.ageRule || data.rule) {
             if (unit === 1) { 
@@ -488,9 +608,11 @@
         const weight = parseFloat(document.getElementById(`weight${type}`).value);
         const age = parseFloat(document.getElementById(`age${type}`).value);
         const rawInput = parseFloat(document.getElementById(`doseInput${type}`).value);
+        
         let inputDose = rawInput;
         const isLiquid = document.getElementById(`isLiquidInput${type}`).checked;
         const drugConc = (drug && drug.conc) ? drug.conc : 0;
+        
         if (isLiquid && !isNaN(rawInput) && drugConc > 0) inputDose = rawInput * drugConc;
 
         const alertArea = document.getElementById(`safetyAlertArea${type}`);
@@ -502,11 +624,14 @@
 
         const calcRange = (minMg, maxMg, unitStr) => {
             let suffix = "";
-            if (drugConc > 0) { const minML = (minMg / drugConc).toFixed(2); const maxML = (maxMg / drugConc).toFixed(2); suffix = `<br><span style="color:#0d47a1">(${minML} ～ ${maxML} mL)</span>`; }
+            if (drugConc > 0) { 
+                const minML = (minMg / drugConc).toFixed(2); 
+                const maxML = (maxMg / drugConc).toFixed(2); 
+                suffix = `<br><span style="color:#0d47a1">(${minML} ～ ${maxML} mL)</span>`; 
+            }
             return `<strong>${minMg.toFixed(2)}～${maxMg.toFixed(2)} <span class="unit-emph ${unitStr=='回'?'unit-dose':'unit-day'}">mg/${unitStr}</span></strong>${suffix}`;
         };
 
-        // ガイドライン文字列と判定ロジック
         let guideHtml = "";
         let resultHtml = "";
         let isAgeSafe=false, isWeightSafe=false;
@@ -523,7 +648,6 @@
                 guideHtml += `<div><strong>年齢基準 (${age}歳):</strong> 推奨 ${calcRange(tMin, tMax, unitStr)}</div>`;
                 
                 if(inputDose) {
-                    // V19: Tolerance ±5%
                     if (inputDose < tMin * 0.95) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 年齢基準不足</div>`;
                     else if (inputDose > tMax * 1.05) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 年齢基準超過</div>`;
                     else { resultHtml += `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 年齢基準適合</div>`; isAgeSafe = true; }
@@ -532,9 +656,10 @@
         }
 
         // B: Weight Rule
-        if (rule.rule && weight) {
+        const r = rule.rule || (rule.min !== undefined ? rule : null);
+        if (r && weight) {
             hasWeightRule = true;
-            const r = rule.rule; const unitStr = r.unit === 1 ? "回" : "日";
+            const unitStr = r.unit === 1 ? "回" : "日";
             let minSafe = r.min * weight; let maxSafe = r.max * weight;
             let limitMsg = "";
             if (r.limitDay && r.unit === 0 && maxSafe > r.limitDay) { maxSafe = r.limitDay; limitMsg = `(上限${r.limitDay})`; }
@@ -542,20 +667,16 @@
             guideHtml += `<div><strong>体重基準 (${weight}kg):</strong> ${calcRange(minSafe, maxSafe, unitStr)} ${limitMsg}</div>`;
 
             if(inputDose) {
-                // V19: Tolerance ±5%
                 if (inputDose < minSafe * 0.95) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過少</span> 体重基準未満</div>`;
                 else if (inputDose > maxSafe * 1.05) resultHtml += `<div class="detail-result"><span class="badge-mini bg-red">過量</span> 体重基準超過</div>`;
                 else { resultHtml += `<div class="detail-result"><span class="badge-mini bg-green">適正</span> 体重基準内</div>`; isWeightSafe = true; }
             }
         }
 
-        // 表示更新 (V19: 常時表示)
         if(guideHtml) {
             guidelineArea.style.display = "block";
             guidelineArea.innerHTML = guideHtml;
-        } else {
-            guidelineArea.style.display = "none";
-        }
+        } else { guidelineArea.style.display = "none"; }
 
         if (!inputDose) {
             resBox.className = "audit-box audit-check";
@@ -610,11 +731,16 @@
         return result;
     }
 
-    function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。"); }
+    function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。\n注射薬は[区分]列が1のデータのみ表示されます。"); }
     function downloadJsonFile() { const data = parseExcelData(); if(!data) return; const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'database.json'; a.click(); URL.revokeObjectURL(url); }
+    
+    // --- 計算式ロジック ---
     function calcAugsberger() { const ad = parseFloat(document.getElementById('augAdult').value); const wt = parseFloat(document.getElementById('augWeight').value); if (ad && wt) document.getElementById('augResult').textContent = (ad * (wt * 4 + 20) / 100).toFixed(1); }
     function calcSchwartz() { const h = parseFloat(document.getElementById('schHeight').value); const cr = parseFloat(document.getElementById('schCr').value); if(h && cr) document.getElementById('schResult').textContent = (0.35 * h / cr).toFixed(1); }
-    function drawGrowthChart(cid, type) { const w=300, h=250, pad=30; const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width","100%"); svg.setAttribute("height","100%"); svg.setAttribute("viewBox",`0 0 ${w} ${h}`); const d = growthData[type]; const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d",`M${pad},${pad} V${h-pad} H${w-pad}`); path.setAttribute("stroke","#333"); path.setAttribute("stroke-width","1"); path.setAttribute("fill","none"); svg.appendChild(path); let lineD = `M`; d.forEach((p,i)=>{ const x=pad+(p[0]/12)*(w-pad*2); const y=(h-pad)-(p[1]/50)*(h-pad*2); lineD+=`${i===0?'':','}${x} ${y}`; const c=document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx",x); c.setAttribute("cy",y); c.setAttribute("r",2); c.setAttribute("fill",type==='boy'?'#3498db':'#e74c3c'); svg.appendChild(c); }); const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); line.setAttribute("points",lineD.replace(/M/,'')); line.setAttribute("stroke",type==='boy'?'#3498db':'#e74c3c'); line.setAttribute("stroke-width","2"); line.setAttribute("fill","none"); svg.appendChild(line); document.getElementById(cid).appendChild(svg); }
+    function calcYoung() { const ad = parseFloat(document.getElementById('yngAdult').value); const ag = parseFloat(document.getElementById('yngAge').value); if(ad && ag) document.getElementById('yngResult').textContent = (ad * ag / (ag + 12)).toFixed(1); }
+    function calcCrawford() { const ad = parseFloat(document.getElementById('crawAdult').value); const ht = parseFloat(document.getElementById('crawHt').value); const wt = parseFloat(document.getElementById('crawWt').value); if(ad && ht && wt) { const bsa = 0.007184 * Math.pow(wt, 0.425) * Math.pow(ht, 0.725); document.getElementById('crawBSA').textContent = bsa.toFixed(2); document.getElementById('crawResult').textContent = (ad * bsa / 1.73).toFixed(1); } }
+    function calcHarnack() { const ad = parseFloat(document.getElementById('harAdult').value); const ag = parseFloat(document.getElementById('harAge').value); if (ad && !isNaN(ag)) { let ratio = ""; if (ag < 0.08) ratio = "1/20 - 1/10"; else if (ag < 0.5) ratio = "1/8 - 1/6"; else if (ag < 1) ratio = "1/6 - 1/5"; else if (ag < 3) ratio = "1/5 - 1/4"; else if (ag < 7.5) ratio = "1/4 - 1/3"; else if (ag < 12) ratio = "1/3 - 1/2"; else ratio = "1/2 - 3/4"; const parts = ratio.split('-').map(s => eval(s)); const min = (ad * parts[0]).toFixed(0); const max = (ad * parts[parts.length-1]).toFixed(0); document.getElementById('harResult').textContent = `${min} - ${max}`; } }
+    function drawGrowthChart(cid, type) { const w=300, h=250, pad=30; const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width","100%"); svg.setAttribute("height","100%"); svg.setAttribute("viewBox",`0 0 ${w} ${h}`); const d = growthData[type]; const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d",`M${pad},${pad} V${h-pad} H${w-pad}`); path.setAttribute("stroke","#333"); path.setAttribute("stroke-width","1"); path.setAttribute("fill","none"); svg.appendChild(path); for(let i=0; i<=12; i+=2) { const x=pad+(i/12)*(w-pad*2); const t=document.createElementNS("http://www.w3.org/2000/svg","text"); t.setAttribute("x",x); t.setAttribute("y",h-10); t.textContent=i; t.setAttribute("font-size","10"); t.setAttribute("text-anchor","middle"); svg.appendChild(t); } const labelX=document.createElementNS("http://www.w3.org/2000/svg","text"); labelX.setAttribute("x",w/2); labelX.setAttribute("y",h); labelX.textContent="年齢 (歳)"; labelX.setAttribute("font-size","11"); labelX.setAttribute("text-anchor","middle"); svg.appendChild(labelX); for(let i=0; i<=50; i+=10) { const y=(h-pad)-(i/50)*(h-pad*2); const t=document.createElementNS("http://www.w3.org/2000/svg","text"); t.setAttribute("x",25); t.setAttribute("y",y+3); t.textContent=i; t.setAttribute("font-size","10"); t.setAttribute("text-anchor","end"); svg.appendChild(t); } const labelY=document.createElementNS("http://www.w3.org/2000/svg","text"); labelY.setAttribute("x",10); labelY.setAttribute("y",pad-10); labelY.textContent="体重 (kg)"; labelY.setAttribute("font-size","11"); labelY.setAttribute("text-anchor","start"); svg.appendChild(labelY); for(let i=10; i<=50; i+=10){ const y=(h-pad)-(i/50)*(h-pad*2); const l=document.createElementNS("http://www.w3.org/2000/svg","line"); l.setAttribute("x1",pad); l.setAttribute("x2",w-pad); l.setAttribute("y1",y); l.setAttribute("y2",y); l.setAttribute("stroke","#eee"); l.setAttribute("stroke-dasharray","2,2"); svg.insertBefore(l, path); } let lineD = `M`; d.forEach((p,i)=>{ const x=pad+(p[0]/12)*(w-pad*2); const y=(h-pad)-(p[1]/50)*(h-pad*2); lineD+=`${i===0?'':','}${x} ${y}`; const c=document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx",x); c.setAttribute("cy",y); c.setAttribute("r",2); c.setAttribute("fill",type==='boy'?'#3498db':'#e74c3c'); svg.appendChild(c); }); const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline"); line.setAttribute("points",lineD.replace(/M/,'')); line.setAttribute("stroke",type==='boy'?'#3498db':'#e74c3c'); line.setAttribute("stroke-width","2"); line.setAttribute("fill","none"); svg.appendChild(line); document.getElementById(cid).appendChild(svg); }
     function drawGrowthTable() { const c = document.getElementById('growthTableContainer'); let h = '<table class="common-table"><thead><tr><th>年齢</th>'; growthData.boy.forEach(p=>h+=`<th>${p[0]}</th>`); h+='</tr></thead><tbody><tr><th>男子</th>'; growthData.boy.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr><tr><th>女子</th>'; growthData.girl.forEach(p=>h+=`<td>${p[1]}</td>`); h+='</tr></tbody></table>'; c.innerHTML = h; }
 </script>
 </body>
