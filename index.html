@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小児用量監査ツール V30</title>
+    <title>小児用量監査ツール V35</title>
     <style>
         /* --- 基本設定 --- */
-        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; --inj-color: #8e44ad; }
+        :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; --inj-color: #8e44ad; --liq-color: #00bcd4; }
         body { font-family: "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
+        
         header { background: var(--primary); color: #fff; padding: 15px 0; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 1.4rem; }
         
@@ -36,7 +37,17 @@
         .col { flex: 1; min-width: 150px; }
         
         label { display: block; font-weight: bold; margin-bottom: 5px; color: var(--primary); font-size: 0.95rem; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-sizing: border-box; transition: all 0.3s; }
+        
+        /* 入力欄のデザイン統一 */
+        input, textarea, .liquid-toggle-btn { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            transition: all 0.3s; 
+        }
         input:disabled { background: #e9ecef; }
         
         /* 年齢入力補助ボタン */
@@ -74,27 +85,45 @@
         .audit-danger { background: #fbe9e7; border-left-color: var(--danger); color: #b71c1c; }
         .audit-check { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
         
-        /* 推奨量表示エリア */
+        /* ガイドライン表示エリア */
         .guideline-area { background: #eef2f5; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ddd; font-weight:bold; color:#2c3e50; }
-
         .detail-result { font-size: 0.95rem; margin-top: 5px; padding: 8px; background: #fff; border: 1px solid #eee; border-radius: 4px; display: flex; align-items: center; }
         .badge-mini { display: inline-block; padding: 2px 8px; font-size: 0.8rem; border-radius: 4px; color: white; margin-right: 10px; min-width: 40px; text-align: center; }
         .bg-green { background: var(--success); }
         .bg-red { background: var(--danger); }
         .bg-gray { background: #95a5a6; }
-
         .original-text { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; color: #444; line-height: 1.8; font-family: inherit; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; }
         
         /* 強調表示 */
         .unit-emph { font-weight: bold; }
         .unit-dose { color: #d35400; }
         .unit-day { color: #2980b9; }
+        
         input.input-dose { border: 2px solid #e67e22; background: #fdf2e9; }
         input.input-day { border: 2px solid #3498db; background: #ebf5fb; }
+        input.input-liquid { border: 2px solid var(--liq-color) !important; background: #e0f7fa !important; }
 
-        /* その他 */
-        .liquid-switch { display:none; align-items:center; margin-top:5px; font-size:0.9rem; color:#2c3e50; font-weight:bold; }
-        .liquid-switch input { width:auto; margin-right:5px; transform:scale(1.2); }
+        /* 液剤スイッチ(ボタン型) */
+        .liquid-btn-container { margin-top: 5px; display: none; }
+        .liquid-toggle-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 46px; 
+            padding: 0 10px; border-radius: 4px; cursor: pointer;
+            font-weight: bold; font-size: 0.95rem; transition: 0.2s;
+            border: 1px solid #ccc; background: #f8f9fa; color: #666;
+            margin-bottom: 0;
+        }
+        .liquid-toggle-btn:hover { background: #e9ecef; }
+        .liquid-toggle-btn input { display: none; }
+        
+        .liquid-toggle-btn.active {
+            border-color: var(--liq-color);
+            background: var(--liq-color);
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0,188,212,0.3);
+        }
+        .liquid-icon { margin-right: 8px; font-size: 1.1rem; }
+        
         .ref-links a { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: var(--accent); text-decoration: none; background: #f0f8ff; padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; }
         .ref-links a:hover { background: var(--accent); color: #fff; }
         .ref-nolink { display: inline-block; margin-right: 15px; margin-bottom: 8px; color: #666; background: #f5f5f5; padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.9rem; }
@@ -151,7 +180,7 @@
 <body>
 
 <header>
-    <h1>💊 小児用量監査ツール V30</h1>
+    <h1>💊 小児用量監査ツール V35</h1>
 </header>
 
 <div id="errorBanner"></div>
@@ -177,10 +206,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col"><label>体重 (kg)</label><input type="number" id="weightOral" step="0.1" placeholder="15.5" oninput="runAudit('Oral')"></div>
+                <div class="col"><label>体重 (kg)</label><input type="number" id="weightOral" step="0.1" placeholder="例) 15.5" oninput="runAudit('Oral')"></div>
                 <div class="col" style="position:relative;">
                     <label>年齢 (歳)</label>
-                    <input type="number" id="ageOral" step="0.01" placeholder="3" oninput="runAudit('Oral')">
+                    <input type="number" id="ageOral" step="0.01" placeholder="例) 3" oninput="runAudit('Oral')">
                     <button class="age-helper-btn" onclick="toggleAgeHelper('Oral')">👶 月齢/日齢入力</button>
                     <div id="ageHelperOral" class="age-helper-popup">
                         <div class="age-helper-row">
@@ -196,8 +225,14 @@
                 </div>
                 <div class="col">
                     <label id="doseLabelOral">処方量</label>
-                    <input type="number" id="doseInputOral" placeholder="入力" oninput="runAudit('Oral')" disabled>
-                    <label class="liquid-switch" id="liquidSwitchOral"><input type="checkbox" id="isLiquidInputOral" onchange="runAudit('Oral')"> mL入力</label>
+                    <input type="number" id="doseInputOral" placeholder="例) 200" oninput="runAudit('Oral')" disabled>
+                    
+                    <div class="liquid-btn-container" id="liquidSwitchOral">
+                        <label class="liquid-toggle-btn" id="liquidLabelOral">
+                            <input type="checkbox" id="isLiquidInputOral" onchange="toggleLiquid('Oral')">
+                            <span id="liquidTextOral"><span class="liquid-icon">💊</span>mg入力 (濃度: --)</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -234,10 +269,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col"><label>体重 (kg)</label><input type="number" id="weightInj" step="0.1" placeholder="15.5" oninput="runAudit('Inj')"></div>
+                <div class="col"><label>体重 (kg)</label><input type="number" id="weightInj" step="0.1" placeholder="例) 15.5" oninput="runAudit('Inj')"></div>
                 <div class="col" style="position:relative;">
                     <label>年齢 (歳)</label>
-                    <input type="number" id="ageInj" step="0.01" placeholder="3" oninput="runAudit('Inj')">
+                    <input type="number" id="ageInj" step="0.01" placeholder="例) 3" oninput="runAudit('Inj')">
                     <button class="age-helper-btn" style="background:#9b59b6;" onclick="toggleAgeHelper('Inj')">👶 月齢/日齢入力</button>
                     <div id="ageHelperInj" class="age-helper-popup">
                         <div class="age-helper-row">
@@ -253,8 +288,14 @@
                 </div>
                 <div class="col">
                     <label id="doseLabelInj">処方量</label>
-                    <input type="number" id="doseInputInj" placeholder="入力" oninput="runAudit('Inj')" disabled>
-                    <label class="liquid-switch" id="liquidSwitchInj"><input type="checkbox" id="isLiquidInputInj" onchange="runAudit('Inj')"> mL入力</label>
+                    <input type="number" id="doseInputInj" placeholder="例) 200" oninput="runAudit('Inj')" disabled>
+                    
+                    <div class="liquid-btn-container" id="liquidSwitchInj">
+                        <label class="liquid-toggle-btn" id="liquidLabelInj">
+                            <input type="checkbox" id="isLiquidInputInj" onchange="toggleLiquid('Inj')">
+                            <span id="liquidTextInj"><span class="liquid-icon">💉</span>mg入力 (濃度: --)</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -285,73 +326,17 @@
             <div class="col"><h3 style="text-align:center; color:#e74c3c; margin:0 0 10px 0;">女子 (Girls)</h3><div id="chartGirl" class="chart-container"></div></div>
             <div class="col"><h3 style="text-align:center; color:#3498db; margin:0 0 10px 0;">男子 (Boys)</h3><div id="chartBoy" class="chart-container"></div></div>
         </div>
-        
         <h3>📈 日本人小児の平均体重一覧表 (kg)</h3>
         <div id="growthTableContainer"></div>
         <div class="source-note">出典：厚生労働省 乳幼児身体発育調査（平成22年）、学校保健統計調査（平成30年）等に基づく概算値</div>
-        
         <h2>🧮 計算式</h2>
         <div class="row">
-            <div class="col">
-                <div class="formula-box">
-                    <div class="formula-title">Augsberger式 II</div>
-                    <div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div>
-                    <div class="calc-area">
-                        成人: <input type="number" id="augAdult" style="width:100px;">mg × 体重: <input type="number" id="augWeight" style="width:100px;">kg 
-                        <button onclick="calcAugsberger()">計算</button> = <span id="augResult" style="font-weight:bold;">---</span> mg
-                    </div>
-                    <div class="source-note">出典：Augsberger A: Klin. Wochenschr., 32: 945, 1954</div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="formula-box">
-                    <div class="formula-title">Schwartzの式 (eGFR推算)</div>
-                    <div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div>
-                    <div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div>
-                    <div class="calc-area">
-                        身長: <input type="number" id="schHeight" style="width:100px;">cm / Cr: <input type="number" id="schCr" style="width:100px;">
-                        <button onclick="calcSchwartz()">計算</button> = <span id="schResult" style="font-weight:bold;">---</span>
-                    </div>
-                    <div class="source-note">出典：日本小児腎臓病学会 日本人小児の推算糸球体濾過量(eGFR)</div>
-                </div>
-            </div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Augsberger式 II</div><div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div><div class="calc-area">成人: <input type="number" id="augAdult" style="width:100px;">mg × 体重: <input type="number" id="augWeight" style="width:100px;">kg <button onclick="calcAugsberger()">計算</button> = <span id="augResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Augsberger A: Klin. Wochenschr., 32: 945, 1954</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Schwartzの式 (eGFR推算)</div><div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div><div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div><div class="calc-area">身長: <input type="number" id="schHeight" style="width:100px;">cm / Cr: <input type="number" id="schCr" style="width:100px;"> <button onclick="calcSchwartz()">計算</button> = <span id="schResult" style="font-weight:bold;">---</span></div><div class="source-note">出典：日本小児腎臓病学会 日本人小児の推算糸球体濾過量(eGFR)</div></div></div>
         </div>
-
         <div class="row">
-            <div class="col">
-                <div class="formula-box">
-                    <div class="formula-title">Von Harnack表 (簡易計算)</div>
-                    <div class="calc-area">
-                        成人: <input type="number" id="harAdult" style="width:100px;">mg × 年齢: <input type="number" id="harAge" style="width:100px;">歳
-                        <button onclick="calcHarnack()">計算</button> = <span id="harResult" style="font-weight:bold;">---</span> mg
-                    </div>
-                    <table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6ヶ月)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6ヶ月~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table>
-                    <div class="source-note">出典：von Harnack GA: Arzneimitteldosierung im Kindesalter, 1965</div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="formula-box">
-                    <div class="formula-title">Young式</div>
-                    <div class="formula-math">小児量 = 成人量 × 年齢 / ( 年齢 + 12 )</div>
-                    <div class="calc-area">
-                        成人: <input type="number" id="yngAdult" style="width:100px;">mg × 年齢: <input type="number" id="yngAge" style="width:100px;">歳
-                        <button onclick="calcYoung()">計算</button> = <span id="yngResult" style="font-weight:bold;">---</span> mg
-                    </div>
-                    <div class="source-note">出典：Young T: An Introduction to Medical Literature, London, 1813</div>
-                    
-                    <hr style="border:0; border-top:1px solid #ddd; margin:15px 0;">
-                    
-                    <div class="formula-title">Crawford式</div>
-                    <div class="formula-math">小児量 = 成人量 × 体表面積(m²) / 1.73</div>
-                    <div class="calc-area">
-                        成人: <input type="number" id="crawAdult" style="width:100px;">mg <br>
-                        身長: <input type="number" id="crawHt" style="width:100px;">cm / 体重: <input type="number" id="crawWt" style="width:100px;">kg
-                        <button onclick="calcCrawford()">計算</button><br>
-                        BSA: <span id="crawBSA">---</span> m² → <span id="crawResult" style="font-weight:bold;">---</span> mg
-                    </div>
-                    <div class="source-note">出典：Crawford JD: Pediatrics, 6: 78, 1950<br>BSA計算: DuBois式を使用</div>
-                </div>
-            </div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Von Harnack表 (簡易計算)</div><div class="calc-area">成人: <input type="number" id="harAdult" style="width:100px;">mg × 年齢: <input type="number" id="harAge" style="width:100px;">歳 <button onclick="calcHarnack()">計算</button> = <span id="harResult" style="font-weight:bold;">---</span> mg</div><table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6ヶ月)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6ヶ月~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table><div class="source-note">出典：von Harnack GA: Arzneimitteldosierung im Kindesalter, 1965</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Young式</div><div class="formula-math">小児量 = 成人量 × 年齢 / ( 年齢 + 12 )</div><div class="calc-area">成人: <input type="number" id="yngAdult" style="width:100px;">mg × 年齢: <input type="number" id="yngAge" style="width:100px;">歳 <button onclick="calcYoung()">計算</button> = <span id="yngResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Young T: An Introduction to Medical Literature, London, 1813</div><hr style="border:0; border-top:1px solid #ddd; margin:15px 0;"><div class="formula-title">Crawford式</div><div class="formula-math">小児量 = 成人量 × 体表面積(m²) / 1.73</div><div class="calc-area">成人: <input type="number" id="crawAdult" style="width:100px;">mg <br>身長: <input type="number" id="crawHt" style="width:100px;">cm / 体重: <input type="number" id="crawWt" style="width:100px;">kg <button onclick="calcCrawford()">計算</button><br>BSA: <span id="crawBSA">---</span> m² → <span id="crawResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Crawford JD: Pediatrics, 6: 78, 1950<br>BSA計算: DuBois式を使用</div></div></div>
         </div>
     </div>
 
@@ -379,41 +364,25 @@
 
     // 特別ルール
     const specialDrugRules = {
-        "タミフル": [
-            { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } },
-            { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } },
-            { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } }
+        "タミフル": [ { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } }, { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } }, { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } } ],
+        "オセルタミビル": [ { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } }, { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } }, { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } } ],
+        "デカドロン": [ { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } }, { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } }, { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } } ],
+        "デキサメタゾン": [ { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } }, { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } }, { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } } ],
+        "ダイフェン": [
+            { label: "ニューモシスチス肺炎 治療: TMP15-20mg/kg (製剤187.5-250mg/kg)", rule: { min:187.5, max:250, unit:0 } },
+            { label: "ニューモシスチス肺炎 予防: TMP4-8mg/kg (製剤50-100mg/kg)", rule: { min:50, max:100, unit:0 } },
+            { label: "尿路感染: TMP2mg/kg (製剤25mg/kg)", rule: { min:25, max:25, unit:0 } },
+            { label: "膀胱炎(2歳以上): TMP6-12mg/kg (製剤75-150mg/kg)", rule: { min:75, max:150, unit:0 } }
         ],
-        "オセルタミビル": [
-            { label: "治療 (<1歳): 6mg/kg", rule: { min:6, max:6, unit:0 } },
-            { label: "治療 (1歳~): 4mg/kg (Max150)", rule: { min:4, max:4, unit:0, limitDay:150 } },
-            { label: "予防: 2mg/kg (Max75)", rule: { min:2, max:2, unit:0, limitDay:75 } }
-        ],
-        "デカドロン": [
-            { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } },
-            { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
-        ],
-        "デキサメタゾン": [
-            { label: "喘息", rule: { min:0.2, max:0.3, unit:1 } },
-            { label: "クループ", rule: { min:0.15, max:0.6, unit:1 } },
-            { label: "先天性副腎過形成", ageRule: { list:[{start:0, end:100, dose:0.5}], unit:0 } }
+        "バクタ": [
+            { label: "ニューモシスチス肺炎 治療: TMP15-20mg/kg (製剤187.5-250mg/kg)", rule: { min:187.5, max:250, unit:0 } },
+            { label: "ニューモシスチス肺炎 予防: TMP4-8mg/kg (製剤50-100mg/kg)", rule: { min:50, max:100, unit:0 } },
+            { label: "尿路感染: TMP2mg/kg (製剤25mg/kg)", rule: { min:25, max:25, unit:0 } },
+            { label: "膀胱炎(2歳以上): TMP6-12mg/kg (製剤75-150mg/kg)", rule: { min:75, max:150, unit:0 } }
         ]
     };
-
-    const drugWarnings = [
-        { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・骨発育不全リスク" },
-        { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満】ライ症候群リスク(川崎病除く)" },
-        { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
-        { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" },
-        { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
-        { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
-        { key: "シプロフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
-        { key: "ノルフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" },
-        { key: "プロポフォール", limitAge: 100, msg: "⚠️【小児】集中治療における鎮静は禁忌(プロポフォール注入症候群)" }
-    ];
-
-    const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬量量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"IWK Health Neonatal Guidelines",url:"https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo"} };
+    const drugWarnings = [ { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・骨発育不全リスク" }, { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満】ライ症候群リスク(川崎病除く)" }, { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" }, { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" }, { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "シプロフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "ノルフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "プロポフォール", limitAge: 100, msg: "⚠️【小児】集中治療における鎮静は禁忌(プロポフォール注入症候群)" } ];
+    const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬用量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"IWK Health Neonatal Guidelines",url:"https://www.dir.iwk.nshealth.ca/Home/DDGDetails/46d8310f-1d91-e911-80f2-005056b200d2?PatientPopulation=Neo"} };
     const growthData = { boy: [[0,3.0],[1,9.6],[2,12.5],[3,14.6],[4,16.7],[5,18.9],[6,21.4],[7,24.1],[8,27.2],[9,30.6],[10,34.2],[11,38.2],[12,42.5]], girl: [[0,3.0],[1,8.9],[2,11.8],[3,14.0],[4,16.2],[5,18.5],[6,20.9],[7,23.6],[8,26.5],[9,30.0],[10,33.8],[11,38.0],[12,42.0]] };
 
     window.onload = function() {
@@ -469,6 +438,28 @@
         runAudit(type);
     }
 
+    function toggleLiquid(type) {
+        const check = document.getElementById(`isLiquidInput${type}`);
+        const labelText = document.getElementById(`liquidText${type}`);
+        const label = document.getElementById(`liquidLabel${type}`);
+        const doseInput = document.getElementById(`doseInput${type}`);
+        const drug = (type === 'Oral') ? currentOralDrug : currentInjDrug;
+        const conc = (drug && drug.conc) ? drug.conc : '--';
+        
+        if (check.checked) {
+            labelText.innerHTML = `<span class="liquid-icon">💧</span>mL入力 (濃度:${conc}mg/mL)`;
+            label.classList.add('active');
+            doseInput.placeholder = "例) 4";
+            doseInput.classList.add('input-liquid');
+        } else {
+            labelText.innerHTML = `<span class="liquid-icon">💊</span>mg入力 (通常)`;
+            label.classList.remove('active');
+            doseInput.placeholder = "例) 200";
+            doseInput.classList.remove('input-liquid');
+        }
+        runAudit(type);
+    }
+
     function selectDrug(drug, type) {
         if (type === 'Oral') { currentOralDrug = drug; currentOralRule = drug; } 
         else { currentInjDrug = drug; currentInjRule = drug; }
@@ -483,12 +474,12 @@
         document.getElementById(`resPedsText${type}`).textContent = drug.text || "（添付文書等の記載なし）";
         updateRefs(drug, type);
 
-        const liqSwitch = document.getElementById(`liquidSwitch${type}`);
+        const container = document.getElementById(`liquidSwitch${type}`);
         document.getElementById(`isLiquidInput${type}`).checked = false;
         if (drug.conc && drug.conc > 0) {
-            liqSwitch.style.display = 'inline-flex';
-            liqSwitch.innerHTML = `<input type="checkbox" id="isLiquidInput${type}" onchange="runAudit('${type}')"> mL入力 (濃度:${drug.conc}mg/mL)`;
-        } else { liqSwitch.style.display = 'none'; }
+            container.style.display = 'block';
+            toggleLiquid(type);
+        } else { container.style.display = 'none'; }
 
         let warning = null;
         const alertArea = document.getElementById(`safetyAlertArea${type}`);
@@ -576,11 +567,11 @@
             if (unit === 1) { 
                 doseLabel.innerHTML = '処方量 <span class="unit-emph unit-dose">(1回量)</span>';
                 badge.textContent = "基準: 1回量"; badge.style.background = "#fff3cd"; badge.style.color = "#d35400";
-                inputField.className = "input-dose";
+                inputField.classList.remove('input-day'); inputField.classList.add('input-dose');
             } else { 
                 doseLabel.innerHTML = '処方量 <span class="unit-emph unit-day">(1日総量)</span>';
                 badge.textContent = "基準: 1日総量"; badge.style.background = "#d1ecf1"; badge.style.color = "#2980b9";
-                inputField.className = "input-day";
+                inputField.classList.remove('input-dose'); inputField.classList.add('input-day');
             }
         } else {
             doseLabel.textContent = "処方量 (判定不可)";
@@ -650,10 +641,10 @@
             const unitStr = r.unit === 1 ? "回" : "日";
             let minSafe = r.min * weight; let maxSafe = r.max * weight;
             let limitMsg = "";
-            if (r.limitDay && r.unit === 0 && maxSafe > r.limitDay) {
-                 if (maxSafe > r.limitDay) maxSafe = r.limitDay;
-                 if (minSafe > r.limitDay) minSafe = r.limitDay; // Cap min as well (V30 fix)
-                 limitMsg = `(上限${r.limitDay})`; 
+            if (r.limitDay && r.unit === 0 && maxSafe > r.limitDay) { 
+                if (maxSafe > r.limitDay) maxSafe = r.limitDay;
+                if (minSafe > r.limitDay) minSafe = r.limitDay;
+                limitMsg = `(上限${r.limitDay})`; 
             }
 
             guideHtml += `<div><strong>体重基準 (${weight}kg):</strong> ${calcRange(minSafe, maxSafe, unitStr)} ${limitMsg}</div>`;
@@ -726,43 +717,8 @@
 
     function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。"); }
     function downloadJsonFile() { const data = parseExcelData(); if(!data) return; const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'database.json'; a.click(); URL.revokeObjectURL(url); }
-    
-    // --- 計算式ロジック ---
-    function calcAugsberger() { 
-        const ad = parseFloat(document.getElementById('augAdult').value); 
-        const wt = parseFloat(document.getElementById('augWeight').value); 
-        if (ad && wt) document.getElementById('augResult').textContent = (ad * (wt * 4 + 20) / 100).toFixed(1); 
-    }
-    
-    function calcSchwartz() { 
-        const h = parseFloat(document.getElementById('schHeight').value); 
-        const cr = parseFloat(document.getElementById('schCr').value); 
-        if(h && cr) document.getElementById('schResult').textContent = (0.35 * h / cr).toFixed(1); 
-    }
-    
-    function calcYoung() { 
-        const ad = parseFloat(document.getElementById('yngAdult').value); 
-        const ag = parseFloat(document.getElementById('yngAge').value); 
-        if(ad && ag) document.getElementById('yngResult').textContent = (ad * ag / (ag + 12)).toFixed(1); 
-    }
-    
-    function calcCrawford() { 
-        const ad = parseFloat(document.getElementById('crawAdult').value); 
-        const ht = parseFloat(document.getElementById('crawHt').value); 
-        const wt = parseFloat(document.getElementById('crawWt').value); 
-        if(ad && ht && wt) {
-            const bsa = 0.007184 * Math.pow(wt, 0.425) * Math.pow(ht, 0.725);
-            document.getElementById('crawBSA').textContent = bsa.toFixed(2);
-            document.getElementById('crawResult').textContent = (ad * bsa / 1.73).toFixed(1); 
-        }
-    }
-    
-    function calcHarnack() {
-        const ad = parseFloat(document.getElementById('harAdult').value); 
-        const ag = parseFloat(document.getElementById('harAge').value); 
-        if (ad && !isNaN(ag)) {
-            let ratio = "";
-            if (ag < 0.08) ratio = "1/20 - 1/10"; else if (ag < 0.5) ratio = "1/8 - 1/6"; else if (ag < 1) ratio = "1/6 - 1/5"; else if (ag < 3) ratio = "1/5 - 1/4"; else if (ag < 7.5) ratio = "1/4 - 1/3"; else if (ag < 12) ratio = "1/3 - 1/2"; else ratio = "1/2 - 3/4"; const parts = ratio.split('-').map(s => eval(s)); const min = (ad * parts[0]).toFixed(0); const max = (ad * parts[parts.length-1]).toFixed(0); document.getElementById('harResult').textContent = `${min} - ${max}`; } }
+    function calcAugsberger() { const ad = parseFloat(document.getElementById('augAdult').value); const wt = parseFloat(document.getElementById('augWeight').value); if (ad && wt) document.getElementById('augResult').textContent = (ad * (wt * 4 + 20) / 100).toFixed(1); }
+    function calcSchwartz() { const h = parseFloat(document.getElementById('schHeight').value); const cr = parseFloat(document.getElementById('schCr').value); if(h && cr) document.getElementById('schResult').textContent = (0.35 * h / cr).toFixed(1); }
     function drawGrowthChart(cid, type) { const w=300, h=250, pad=30; const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("width","100%"); svg.setAttribute("height","100%"); svg.setAttribute("viewBox",`0 0 ${w} ${h}`); const d = growthData[type]; const path = document.createElementNS("http://www.w3.org/2000/svg", "path"); path.setAttribute("d",`M${pad},${pad} V${h-pad} H${w-pad}`); path.setAttribute("stroke","#333"); path.setAttribute("stroke-width","1"); path.setAttribute("fill","none"); svg.appendChild(path); 
     // 目盛描画
     for(let i=0; i<=12; i+=2) { const x=pad+(i/12)*(w-pad*2); const t=document.createElementNS("http://www.w3.org/2000/svg","text"); t.setAttribute("x",x); t.setAttribute("y",h-10); t.textContent=i; t.setAttribute("font-size","10"); t.setAttribute("text-anchor","middle"); svg.appendChild(t); }
