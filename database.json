@@ -205,7 +205,7 @@
     ],
     "conc": 5,
     "type": 0,
-    "groupId": ""
+    "groupId": "Tipepi"
   },
   {
     "name": "アスベリン散",
@@ -254,7 +254,7 @@
     ],
     "conc": 0,
     "type": 0,
-    "groupId": ""
+    "groupId": "Tipepi"
   },
   {
     "name": "アドソルビン末",
@@ -729,7 +729,7 @@
     ],
     "conc": 20,
     "type": 0,
-    "groupId": ""
+    "groupId": "Aceta"
   },
   {
     "name": "カロナール細粒",
@@ -749,7 +749,7 @@
     ],
     "conc": 0,
     "type": 0,
-    "groupId": ""
+    "groupId": "Aceta"
   },
   {
     "name": "クラリスロマイシン DS",
@@ -1248,7 +1248,7 @@
     ],
     "conc": 0,
     "type": 0,
-    "groupId": ""
+    "groupId": "VPA"
   },
   {
     "name": "ドパストン散",
@@ -1312,7 +1312,12 @@
     "generic": "トリクロホスナトリウム",
     "yomi": "とりくろりーる　とりくろほすなとりうむ",
     "text": "1回20～80mg/kg　最大量:2000mg/回\n1mL中トリクロホスナトリウム100mg",
-    "rule": null,
+    "rule": {
+      "min": 20,
+      "max": 80,
+      "unit": 1,
+      "limitDay": 2000
+    },
     "ageRule": null,
     "refs": [
       1,
@@ -1395,7 +1400,7 @@
     ],
     "conc": 0,
     "type": 0,
-    "groupId": ""
+    "groupId": "VPA"
   },
   {
     "name": "パントシン散",
