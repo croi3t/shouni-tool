@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小児用量監査ツール V40</title>
+    <title>小児用量監査ツール V43</title>
+    <script src="local_database.js" onerror="console.log('ローカルDBなし。ネット接続を試みます。')"></script>
     <style>
         /* --- 基本設定 --- */
         :root { --primary: #2c3e50; --accent: #3498db; --success: #27ae60; --danger: #c0392b; --warning: #f39c12; --bg: #f4f7f6; --text: #333; --inj-color: #8e44ad; --liq-color: #00bcd4; }
@@ -169,14 +170,10 @@
     <script>
         // ▼▼▼ 単位の自動判定設定 ▼▼▼
         const unitConfig = {
-            // ここに含まれる文字があれば「g」扱い
             g_Keywords: ["乳酸Ca", "乳酸カルシウム", "大建中湯", "五苓散", "抑肝散", "小青竜湯", "麦門冬湯", "ツムラ", "クラシエ", "コタロー"],
-            
-            // ここに含まれる文字があれば「μg」扱い
             ug_Keywords: ["メプチン", "プロカテロール", "スピロペント", "ベネトリン"]
         };
 
-        // 単位を判定する関数
         function determineUnit(drugName) {
             if (!drugName) return "mg";
             if (unitConfig.g_Keywords.some(k => drugName.includes(k))) return "g";
@@ -202,7 +199,7 @@
 <body>
 
 <header>
-    <h1>💊 小児用量監査ツール V40</h1>
+    <h1>💊 小児用量監査ツール V43</h1>
 </header>
 
 <div id="errorBanner"></div>
@@ -211,7 +208,7 @@
     <li class="active" onclick="switchTab('tab-oral')" data-tab="tab-oral">💊 内服・外用</li>
     <li onclick="switchTab('tab-inj')" data-tab="tab-inj">💉 注射薬</li>
     <li onclick="switchTab('tab-knowledge')" data-tab="tab-knowledge">📊 資料・知識</li>
-    <li onclick="switchTab('tab-settings')" data-tab="tab-settings">🛠️ データ更新</li>
+    <li onclick="switchTab('tab-settings')" data-tab="tab-settings">🛠️ 運用設定</li>
 </ul>
 
 <div class="container">
@@ -353,28 +350,35 @@
         <div class="source-note">出典：厚生労働省 乳幼児身体発育調査（平成22年）、学校保健統計調査（平成30年）等に基づく概算値</div>
         <h2>🧮 計算式</h2>
         <div class="row">
-            <div class="col"><div class="formula-box"><div class="formula-title">Augsberger式 II</div><div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div><div class="calc-area">成人: <input type="number" id="augAdult" style="width:80px;">mg × 体重: <input type="number" id="augWeight" style="width:80px;">kg <button onclick="calcAugsberger()">計算</button> = <span id="augResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Augsberger A: Klin. Wochenschr., 32: 945, 1954</div></div></div>
-            <div class="col"><div class="formula-box"><div class="formula-title">Schwartzの式 (eGFR推算)</div><div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div><div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div><div class="calc-area">身長: <input type="number" id="schHeight" style="width:80px;">cm / Cr: <input type="number" id="schCr" style="width:80px;"> <button onclick="calcSchwartz()">計算</button> = <span id="schResult" style="font-weight:bold;">---</span></div><div class="source-note">出典：日本小児腎臓病学会 日本人小児の推算糸球体濾過量(eGFR)</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Augsberger式 II</div><div class="formula-math">小児量 = 成人量 × ( 体重 × 4 + 20 ) / 100</div><div class="calc-area">成人: <input type="number" id="augAdult" style="width:100px;">mg × 体重: <input type="number" id="augWeight" style="width:100px;">kg <button onclick="calcAugsberger()">計算</button> = <span id="augResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Augsberger A: Klin. Wochenschr., 32: 945, 1954</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Schwartzの式 (eGFR推算)</div><div style="font-size:0.85rem; color:#666;">2歳以上11歳以下の日本人小児用簡易式</div><div class="formula-math">eGFR = 0.35 × 身長(cm) / 血清Cr</div><div class="calc-area">身長: <input type="number" id="schHeight" style="width:100px;">cm / Cr: <input type="number" id="schCr" style="width:100px;"> <button onclick="calcSchwartz()">計算</button> = <span id="schResult" style="font-weight:bold;">---</span></div><div class="source-note">出典：日本小児腎臓病学会 日本人小児の推算糸球体濾過量(eGFR)</div></div></div>
         </div>
         <div class="row">
-            <div class="col"><div class="formula-box"><div class="formula-title">Von Harnack表 (簡易計算)</div><div class="calc-area">成人: <input type="number" id="harAdult" style="width:80px;">mg × 年齢: <input type="number" id="harAge" style="width:80px;">歳 <button onclick="calcHarnack()">計算</button> = <span id="harResult" style="font-weight:bold;">---</span> mg</div><table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6ヶ月)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6ヶ月~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table><div class="source-note">出典：von Harnack GA: Arzneimitteldosierung im Kindesalter, 1965</div></div></div>
-            <div class="col"><div class="formula-box"><div class="formula-title">Young式</div><div class="formula-math">小児量 = 成人量 × 年齢 / ( 年齢 + 12 )</div><div class="calc-area">成人: <input type="number" id="yngAdult" style="width:80px;">mg × 年齢: <input type="number" id="yngAge" style="width:80px;">歳 <button onclick="calcYoung()">計算</button> = <span id="yngResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Young T: An Introduction to Medical Literature, London, 1813</div><hr style="border:0; border-top:1px solid #ddd; margin:10px 0;"><div class="formula-title">Crawford式</div><div class="formula-math">小児量 = 成人量 × 体表面積(m²) / 1.73</div><div class="calc-area">成人: <input type="number" id="crawAdult" style="width:60px;">mg <br>身長: <input type="number" id="crawHt" style="width:60px;">cm / 体重: <input type="number" id="crawWt" style="width:60px;">kg <button onclick="calcCrawford()">計算</button><br>BSA: <span id="crawBSA">---</span> m² → <span id="crawResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Crawford JD: Pediatrics, 6: 78, 1950<br>BSA計算: DuBois式を使用</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Von Harnack表 (簡易計算)</div><div class="calc-area">成人: <input type="number" id="harAdult" style="width:100px;">mg × 年齢: <input type="number" id="harAge" style="width:100px;">歳 <button onclick="calcHarnack()">計算</button> = <span id="harResult" style="font-weight:bold;">---</span> mg</div><table class="common-table harnack-table"><tr><th>未熟児</th><td>1/20 ～ 1/10</td></tr><tr><th>新生児</th><td>1/10 ～ 1/8</td></tr><tr><th>乳児(~6ヶ月)</th><td>1/8 ～ 1/6</td></tr><tr><th>乳児(6ヶ月~)</th><td>1/6 ～ 1/5</td></tr><tr><th>幼児(1-3)</th><td>1/5 ～ 1/4</td></tr><tr><th>幼児(3-7.5)</th><td>1/4 ～ 1/3</td></tr><tr><th>学童(7.5-12)</th><td>1/3 ～ 1/2</td></tr><tr><th>学童(12~)</th><td>1/2 ～ 3/4</td></tr></table><div class="source-note">出典：von Harnack GA: Arzneimitteldosierung im Kindesalter, 1965</div></div></div>
+            <div class="col"><div class="formula-box"><div class="formula-title">Young式</div><div class="formula-math">小児量 = 成人量 × 年齢 / ( 年齢 + 12 )</div><div class="calc-area">成人: <input type="number" id="yngAdult" style="width:100px;">mg × 年齢: <input type="number" id="yngAge" style="width:100px;">歳 <button onclick="calcYoung()">計算</button> = <span id="yngResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Young T: An Introduction to Medical Literature, London, 1813</div><hr style="border:0; border-top:1px solid #ddd; margin:15px 0;"><div class="formula-title">Crawford式</div><div class="formula-math">小児量 = 成人量 × 体表面積(m²) / 1.73</div><div class="calc-area">成人: <input type="number" id="crawAdult" style="width:100px;">mg <br>身長: <input type="number" id="crawHt" style="width:100px;">cm / 体重: <input type="number" id="crawWt" style="width:100px;">kg <button onclick="calcCrawford()">計算</button><br>BSA: <span id="crawBSA">---</span> m² → <span id="crawResult" style="font-weight:bold;">---</span> mg</div><div class="source-note">出典：Crawford JD: Pediatrics, 6: 78, 1950<br>BSA計算: DuBois式を使用</div></div></div>
         </div>
     </div>
 
     <div id="tab-settings" class="tab-content">
-        <h2>🛠️ データベース管理</h2>
-        <p>Excelデータを貼り付けて、テストまたはファイル作成を行います。</p>
-        <div style="background:#e3f2fd; padding:15px; border-left:5px solid #2196f3; margin-bottom:15px; font-size:0.9rem;">
-            <strong>📝 Excel貼り付け列順 (全13列):</strong><br>
-            [1]商品 [2]一般 [3]よみ [4]文 [5]最小 [6]最大 [7]単位 [8]上限 [9]参照 [10]年齢ルール [11]濃度 [12]区分 [13]グループID
+        <h2>🛠️ 運用設定</h2>
+        <div style="background:#e3f2fd; padding:20px; border-left:5px solid #2196f3; margin-bottom:15px; border-radius:4px;">
+            <h3 style="margin-top:0; color:#1565c0;">✅ データ管理はExcelに統合されました</h3>
+            <p><strong>現在の運用フロー:</strong></p>
+            <ol style="line-height:1.8;">
+                <li>Excelファイルでデータベースを編集します。</li>
+                <li>Excel側のマクロ（ボタン）を実行します。</li>
+                <li>HTMLページを再読み込み（F5キー）するだけで最新データが反映されます。</li>
+            </ol>
+            <p style="color:#666; font-size:0.9rem;">※ GitHubへ公開する際は、マクロで同時生成された <code>database.json</code> をアップロードしてください。</p>
         </div>
-        <textarea id="pasteArea" rows="12" placeholder="ここにExcelを貼り付け..."></textarea>
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn-action" style="background:#27ae60;" onclick="applyLocalData()">▶️ テスト反映</button>
-            <button class="btn-action" style="background:#2980b9;" onclick="downloadJsonFile()">⬇️ JSON作成 (GitHub用)</button>
-        </div>
-        <div id="saveStatus" class="data-status"></div>
+        
+        <details style="margin-top:30px; border:1px solid #ccc; padding:10px; border-radius:4px; background:#f9f9f9;">
+            <summary style="cursor:pointer; font-weight:bold; color:#666;">緊急マニュアルテスト（通常は使用しません）</summary>
+            <div style="margin-top:15px;">
+                <textarea id="pasteArea" rows="6" placeholder="Excelから直接貼り付けて一時テスト..."></textarea>
+                <button class="btn-action" style="background:#7f8c8d; margin-top:10px;" onclick="applyLocalData()">一時テスト反映</button>
+            </div>
+        </details>
     </div>
 </div>
 
@@ -402,16 +406,42 @@
         ]
     };
     const drugWarnings = [ { key: "ミノサイクリン", limitAge: 8, msg: "⚠️【8歳未満 原則禁忌】歯牙黄染・骨発育不全リスク" }, { key: "アスピリン", limitAge: 15, msg: "⚠️【15歳未満】ライ症候群リスク(川崎病除く)" }, { key: "ピレチア", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" }, { key: "プロメタジン", limitAge: 2, msg: "⚠️【2歳未満 禁忌】呼吸抑制" }, { key: "レボフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "トスフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "シプロフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "ノルフロキサシン", limitAge: 18, msg: "⚠️【小児】関節障害リスク" }, { key: "プロポフォール", limitAge: 100, msg: "⚠️【小児】集中治療における鎮静は禁忌(プロポフォール注入症候群)" } ];
-    
-    // 参考文献データ修正版
     const dbRefs = { 1:{title:"添付文書",url:""}, 2:{title:"新小児薬用量",url:""}, 3:{title:"先天性心疾患GL",url:"https://www.j-circ.or.jp/cms/wp-content/uploads/2020/02/JCS2018_Yasukochi.pdf"}, 4:{title:"小児結核診療てびき",url:"https://jata.or.jp/wp-content/uploads/2025/04/shouni_tebiki_202504.pdf"}, 5:{title:"Official ATS/CDC Guidelines",url:"https://academic.oup.com/cid/article/63/7/e147/2196792"}, 6:{title:"新生児マススクリーニングGL",url:"https://jsimd.net/pdf/newborn-mass-screening-disease-practice-guideline2019_v2.pdf"}, 7:{title:"マクロライド系抗生物質の新しい展開",url:"https://search.jamas.or.jp/default/link?pub_year=2000&ichushi_jid=J01816&link_issn=&doc_id=20001128020009&doc_link_id=%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&url=https%3A%2F%2Fwww.medicalonline.jp%2Fjamas.php%3FGoodsID%3D%2Fac3rbbtb%2F2000%2F002706%2F009%2F0839-0842%26dl%3D0&type=MedicalOnline&icon=https%3A%2F%2Fjk04.jamas.or.jp%2Ficon%2F00004_2.gif"}, 8:{title:"今日の治療指針2025＞膀胱尿管逆流",url:""}, 9:{title:"Medspace",url:"https://reference.medscape.com/drug/valium-valtoco-diazepam-342902"}, 10:{title:"未承認薬・適応外薬の要望",url:"https://www.mhlw.go.jp/topics/2012/03/dl/kigyoukenkai-160.pdf"}, 11:{title:"JAID/JSC 感染症治療ガイドライン",url:"https://www.chemotherapy.or.jp/uploads/files/guideline/jaidjsc-kansenshochiryo_nyouro.pdf"}, 12:{title:"小児気管支喘息治療・管理ガイドライン",url:""}, 13:{title:"UpToDate 急性喘息増悪",url:"https://www.uptodate.com/contents/acute-asthma-exacerbations-in-children-younger-than-12-years-emergency-department-management"}, 14:{title:"UpToDate 先天性副腎過形成",url:"https://www.uptodate.com/contents/classic-congenital-adrenal-hyperplasia-due-to-21-hydroxylase-deficiency-in-infants-and-children-treatment"}, 15:{title:"軽症胃腸炎関連けいれんに対するcarbamazepine",url:"https://www.jstage.jst.go.jp/article/ojjscn1969/37/6/37_6_493/_pdf/-char/ja"}, 16:{title:"今日の小児治療指針17版>VitD欠乏",url:""}, 17:{title:"今日の小児治療指針17版>新生児低Ca",url:""}, 18:{title:"今日の小児治療指針17版>急性下痢",url:""}, 19:{title:"新生児診療マニュアル",url:""}, 20:{title:"周産期医学 50 (増刊) 2020",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/138&name=0588-0591j"}, 21:{title:"医師のみ閲覧可能マニュアル",url:""}, 22:{title:"小児心不全薬物治療ガイドライン",url:"https://jpccs.jp/10.9794/jspccs.31.S2_1/data/index.html"}, 23:{title:"今日の治療指針2024>便秘",url:""}, 24:{title:"今日の小児治療指針17版>ウイルス性胃腸炎",url:""}, 25:{title:"小児科ですぐに戦えるホコとタテ",url:""}, 26:{title:"乳児胃食道逆流 六君子湯",url:"https://www.jstage.jst.go.jp/article/jjsps/52/2/52_243/_pdf/-char/ja"}, 27:{title:"今日の小児治療指針17版>胃食道逆流",url:""}, 28:{title:"周産期医学 50 (増刊) 458-462",url:"https://mol.medicalonline.jp/library/journal/download?GoodsID=aq9syuse/2020/0050s1/106&name=0458-0462j"}, 29:{title:"ツムラMEDICAL SITE",url:"https://medical.tsumura.co.jp/support/knowledge/20221104_2.html"}, 30:{title:"公知申請への該当性に係る報告書",url:"https://www.mhlw.go.jp/stf/shingi/2r9852000000ti7f-att/2r9852000000tie2.pdf"}, 31:{title:"新生児鉄剤投与ガイドライン",url:"http://jsnhd.or.jp/pdf/31-1-159-185.pdf"}, 32:{title:"UpToDate: Acute simple cystitis",url:"https://www.uptodate.com/contents/acute-simple-cystitis-in-children-older-than-two-years-and-adolescents-management"} };
     const growthData = { boy: [[0,3.0],[1,9.6],[2,12.5],[3,14.6],[4,16.7],[5,18.9],[6,21.4],[7,24.1],[8,27.2],[9,30.6],[10,34.2],[11,38.2],[12,42.5]], girl: [[0,3.0],[1,8.9],[2,11.8],[3,14.0],[4,16.2],[5,18.5],[6,20.9],[7,23.6],[8,26.5],[9,30.0],[10,33.8],[11,38.0],[12,42.0]] };
 
+    // ★V43: ローカルJSとネット取得の統合
     window.onload = function() {
         try {
             drawGrowthChart('chartGirl', 'girl'); drawGrowthChart('chartBoy', 'boy'); drawGrowthTable();
-            fetch('./database.json').then(r=>r.json()).then(d=>{ dbDrugs=d; document.getElementById('loadingStatusOral').innerHTML=`✅ DB接続完了 (${d.length}件)`; })
-            .catch(e=>{ const local=localStorage.getItem('pediatric_drug_db'); if(local){ dbDrugs=JSON.parse(local); document.getElementById('loadingStatusOral').innerHTML=`⚠️ オフラインデータ (${dbDrugs.length}件)`; } else { document.getElementById('loadingStatusOral').innerHTML=`ℹ️ データ未登録`; } });
+            
+            // 1. エクセルから出力した local_database.js がある場合 (最優先)
+            if (window.localRawData && window.localRawData.length > 0) {
+                dbDrugs = parseArrayData(window.localRawData);
+                document.getElementById('loadingStatusOral').innerHTML=`<span style="color:#27ae60">📂 ローカルDB読込完了 (${dbDrugs.length}件)</span>`;
+            } 
+            // 2. ローカルDBがない場合、ネット経由で取得
+            else {
+                fetch('./database.json')
+                .then(r=>r.json())
+                .then(d=>{ 
+                    // ★V43: Excelから出力された新しい2次元配列JSONに対応
+                    if (d.length > 0 && Array.isArray(d[0])) {
+                        dbDrugs = parseArrayData(d);
+                    } else {
+                        dbDrugs = d; // 古いオブジェクト形式互換
+                    }
+                    document.getElementById('loadingStatusOral').innerHTML=`✅ ネットDB接続完了 (${dbDrugs.length}件)`; 
+                })
+                .catch(e=>{ 
+                    const local = localStorage.getItem('pediatric_drug_db'); 
+                    if(local){ 
+                        dbDrugs=JSON.parse(local); 
+                        document.getElementById('loadingStatusOral').innerHTML=`⚠️ オフラインテストデータ適用中 (${dbDrugs.length}件)`; 
+                    } else { 
+                        document.getElementById('loadingStatusOral').innerHTML=`ℹ️ DB未登録 (同フォルダに local_database.js を配置してください)`; 
+                    } 
+                });
+            }
         } catch(e){ console.error("Init:", e); }
     };
 
@@ -433,7 +463,12 @@
             });
             const showItem = (d, isGroup) => {
                 const li = document.createElement('li');
-                li.textContent = `${d.name} (${d.generic})` + (isGroup ? " [選択]" : "");
+                let displayName = d.name;
+                if (isGroup) {
+                    const m = d.name.match(/^(.+?)\s*[（(](.+?)[)）]$/);
+                    if(m) displayName = m[1]; 
+                }
+                li.textContent = `${displayName} (${d.generic})` + (isGroup ? " [選択]" : "");
                 li.onclick = () => selectDrug(d, type); list.appendChild(li);
             };
             groups.forEach(d => showItem(d, true));
@@ -447,7 +482,6 @@
         const popup = document.getElementById(`ageHelper${type}`);
         popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
     }
-    
     function applyAgeHelper(type) {
         const m = parseFloat(document.getElementById(`helperMonth${type}`).value) || 0;
         const d = parseFloat(document.getElementById(`helperDay${type}`).value) || 0;
@@ -475,10 +509,7 @@
             doseInput.classList.add('input-liquid');
         } else {
             let unitStr = "mg";
-            // ★ V38修正: 単位の動的判定ロジックを強化 (currentRuleも参照)
             const rule = (type === 'Oral') ? currentOralRule : currentInjRule;
-            
-            // ★ V39修正: determineUnitを利用
             if (rule && rule.unitLabel) unitStr = rule.unitLabel;
             else if (drug) unitStr = determineUnit(drug.name);
 
@@ -508,9 +539,9 @@
         document.getElementById(`isLiquidInput${type}`).checked = false;
         if (drug.conc && drug.conc > 0) {
             container.style.display = 'block';
+            toggleLiquid(type); 
         } else { container.style.display = 'none'; }
         
-        // Scenario Handling
         const scenDiv = document.getElementById(`scenarioArea${type}`);
         const optsDiv = document.getElementById(`scenarioOptions${type}`);
         optsDiv.innerHTML = '';
@@ -532,33 +563,34 @@
             scenarios.forEach((s, idx) => {
                 const btn = document.createElement('button');
                 btn.className = "scenario-btn";
-                btn.textContent = s.label;
+                
+                let btnLabel = s.label;
+                const m = s.label.match(/[（(](.+?)[)）]$/); 
+                if(m) btnLabel = m[1];
+                btn.textContent = btnLabel;
+                
                 btn.onclick = () => {
                     Array.from(optsDiv.children).forEach(c => c.classList.remove('active'));
                     btn.classList.add('active');
                     
-                    // ★ V38修正: グループ選択時の変数更新ロジック
                     if(drug.groupId){
-                        // Global state update for correct toggleLiquid behavior
                         if(type === 'Oral') currentOralDrug = s; else currentInjDrug = s;
-                        currentOralRule = s; // Rule is the drug itself
+                        currentOralRule = s; 
 
                         document.getElementById(`resName${type}`).textContent = s.name;
                         document.getElementById(`resPedsText${type}`).textContent = s.text || "（記載なし）";
                         updateRefs(s, type);
                         
-                        // Check concentration again for the *selected member*
                         const innerContainer = document.getElementById(`liquidSwitch${type}`);
-                        document.getElementById(`isLiquidInput${type}`).checked = false; // Reset toggle
+                        document.getElementById(`isLiquidInput${type}`).checked = false; 
                         if(s.conc && s.conc > 0) {
                             innerContainer.style.display = 'block';
                         } else {
                             innerContainer.style.display = 'none';
                         }
                         applyRule(s, type);
-                        toggleLiquid(type); // Update label
+                        toggleLiquid(type); 
                     } else {
-                        // Special Rules (Tamiflu etc.)
                         const selectedRule = s.rule ? s.rule : s; 
                         applyRule(selectedRule, type);
                         toggleLiquid(type); 
@@ -575,7 +607,6 @@
             runAudit(type);
         }
 
-        // Warning Check
         let warning = null;
         const alertArea = document.getElementById(`safetyAlertArea${type}`);
         alertArea.style.display = "none";
@@ -614,11 +645,9 @@
         if (data.ageRule) unit = data.ageRule.unit; else if (data.rule) unit = data.rule.unit;
 
         let unitStr = "mg"; 
-        // ★ V38修正: 単位判定の優先順位整理
         if(data.unitLabel) unitStr = data.unitLabel;
         else {
              const d = (type==='Oral') ? currentOralDrug : currentInjDrug;
-             // ★ V39修正: determineUnitを利用
              if(d) unitStr = determineUnit(d.name);
         }
 
@@ -655,7 +684,6 @@
         const isLiquid = document.getElementById(`isLiquidInput${type}`).checked;
         const drugConc = (drug && drug.conc) ? drug.conc : 0;
         
-        // ★ V39修正: determineUnitを利用
         let currentUnit = "mg";
         if(rule.unitLabel) currentUnit = rule.unitLabel;
         else currentUnit = determineUnit(drug.name);
@@ -669,7 +697,6 @@
             else { document.getElementById(`age${type}`).classList.add('input-alert'); }
         }
 
-        // V36: Precision
         const formatDose = (val) => {
             if(val < 0.1 && val > 0) return val.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
             return val.toFixed(2);
@@ -763,10 +790,66 @@
         else { resBox.className = "audit-box audit-danger"; resBox.innerHTML = `<strong>⚠️ 判定: 注意が必要</strong><br>${resultHtml}`; }
     }
 
-    // --- Converter, Calc, Chart ---
-    function parseExcelData() { const raw=document.getElementById('pasteArea').value;if(!raw.trim()){alert("データを貼り付けてください");return null}const rows=[];let currentRow=[],currentCell="",inQuote=!1;for(let i=0;i<raw.length;i++){const char=raw[i],nextChar=raw[i+1];if(inQuote){if(char==='"'&&nextChar==='"'){currentCell+='"';i++}else if(char==='"'){inQuote=!1}else{currentCell+=char}}else{if(char==='"'){inQuote=!0}else if(char==='\t'){currentRow.push(currentCell);currentCell=""}else if(char==='\n'||char==='\r'){if(char==='\r'&&nextChar==='\n')i++;currentRow.push(currentCell);rows.push(currentRow);currentRow=[];currentCell=""}else{currentCell+=char}}}if(currentCell||currentRow.length>0){currentRow.push(currentCell);rows.push(currentRow)}const result=[];rows.forEach(cols=>{if(cols.length<4)return;const min=parseFloat(cols[4]),max=parseFloat(cols[5]),flag=parseInt(cols[6]);const limit=parseFloat(cols[7]),refsRaw=cols[8]?cols[8].trim():"",ageRuleRaw=cols[9]?cols[9].trim():"";const conc=parseFloat(cols[10]),type=parseInt(cols[11]),groupId=cols[12]?cols[12].trim():"";let rule=null;if(!isNaN(min)&&!isNaN(max)&&!isNaN(flag))rule={min:min,max:max,unit:flag,limitDay:isNaN(limit)?null:limit};let ageRule=null;if(ageRuleRaw){const list=[];ageRuleRaw.split(',').forEach(p=>{const isKg=p.trim().toLowerCase().endsWith('kg');const cleanP=p.replace(/kg$/i,'');const m=cleanP.match(/([\d\.]+)-([\d\.]+):([\d\.]+)/);if(m)list.push({start:parseFloat(m[1]),end:parseFloat(m[2]),dose:parseFloat(m[3]),isKg:isKg})});if(list.length>0)ageRule={list:list,unit:!isNaN(flag)?flag:0}}let refs=refsRaw?refsRaw.split(/[,、\s]+/).map(s=>parseInt(s.replace(/\D/g,''))).filter(n=>!isNaN(n)):[];result.push({name:cols[0].trim(),generic:cols[1].trim(),yomi:cols[2].trim(),text:cols[3].trim(),rule:rule,ageRule:ageRule,refs:refs,conc:!isNaN(conc)?conc:0,type:!isNaN(type)?type:0,groupId:groupId})});return result; }
-    function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 テスト用データ適用中 (${data.length}件)`; alert("データを反映しました。"); }
-    function downloadJsonFile() { const data = parseExcelData(); if(!data) return; const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'database.json'; a.click(); URL.revokeObjectURL(url); }
+    // ★V43: パース処理
+    function parseArrayData(rows) {
+        const result = [];
+        rows.forEach(cols => {
+            if(cols.length < 4) return;
+            const min = parseFloat(cols[4]), max = parseFloat(cols[5]), flag = parseInt(cols[6]);
+            const limit = parseFloat(cols[7]), refsRaw = cols[8]?String(cols[8]).trim():"", ageRuleRaw = cols[9]?String(cols[9]).trim():"";
+            const conc = parseFloat(cols[10]), type = parseInt(cols[11]), groupId = cols[12]?String(cols[12]).trim():"";
+            
+            let rule = null;
+            if(!isNaN(min) && !isNaN(max) && !isNaN(flag)) rule = {min:min, max:max, unit:flag, limitDay: isNaN(limit)?null:limit};
+            
+            let ageRule = null;
+            if(ageRuleRaw){
+                const list = [];
+                ageRuleRaw.split(',').forEach(p => {
+                    const isKg = p.trim().toLowerCase().endsWith('kg');
+                    const cleanP = p.replace(/kg$/i, '');
+                    const m = cleanP.match(/([\d\.]+)-([\d\.]+):([\d\.]+)/);
+                    if(m) list.push({start:parseFloat(m[1]), end:parseFloat(m[2]), dose:parseFloat(m[3]), isKg:isKg});
+                });
+                if(list.length > 0) ageRule = {list:list, unit:!isNaN(flag)?flag:0};
+            }
+            
+            let refs = refsRaw ? refsRaw.split(/[,、\s]+/).map(s=>parseInt(s.replace(/\D/g,''))).filter(n=>!isNaN(n)) : [];
+            
+            result.push({
+                name: cols[0]?String(cols[0]).trim():"", generic: cols[1]?String(cols[1]).trim():"", 
+                yomi: cols[2]?String(cols[2]).trim():"", text: cols[3]?String(cols[3]).trim():"",
+                rule: rule, ageRule: ageRule, refs: refs, conc: !isNaN(conc)?conc:0, type: !isNaN(type)?type:0, groupId: groupId
+            });
+        });
+        return result;
+    }
+
+    function parseExcelData() {
+        const raw = document.getElementById('pasteArea').value;
+        if(!raw.trim()){alert("データを貼り付けてください"); return null;}
+        const rows=[]; let currentRow=[], currentCell="", inQuote=false;
+        for(let i=0; i<raw.length; i++){
+            const char=raw[i], nextChar=raw[i+1];
+            if(inQuote){
+                if(char==='"' && nextChar==='"'){currentCell+='"'; i++;}
+                else if(char==='"'){inQuote=false;}
+                else{currentCell+=char;}
+            }else{
+                if(char==='"'){inQuote=true;}
+                else if(char==='\t'){currentRow.push(currentCell); currentCell="";}
+                else if(char==='\n'||char==='\r'){
+                    if(char==='\r'&&nextChar==='\n') i++;
+                    currentRow.push(currentCell); rows.push(currentRow); currentRow=[]; currentCell="";
+                }
+                else{currentCell+=char;}
+            }
+        }
+        if(currentCell||currentRow.length>0){currentRow.push(currentCell); rows.push(currentRow);}
+        return parseArrayData(rows); 
+    }
+    
+    function applyLocalData() { const data = parseExcelData(); if(!data) return; dbDrugs = data; localStorage.setItem('pediatric_drug_db', JSON.stringify(data)); document.getElementById('loadingStatusOral').innerHTML = `📝 一時テストデータ適用中 (${data.length}件)`; alert("一時データを反映しました。（F5でリセットされます）"); }
     function calcAugsberger() { const ad = parseFloat(document.getElementById('augAdult').value); const wt = parseFloat(document.getElementById('augWeight').value); if (ad && wt) document.getElementById('augResult').textContent = (ad * (wt * 4 + 20) / 100).toFixed(1); }
     function calcSchwartz() { const h = parseFloat(document.getElementById('schHeight').value); const cr = parseFloat(document.getElementById('schCr').value); if(h && cr) document.getElementById('schResult').textContent = (0.35 * h / cr).toFixed(1); }
     function calcYoung() { const ad = parseFloat(document.getElementById('yngAdult').value); const ag = parseFloat(document.getElementById('yngAge').value); if(ad && ag) document.getElementById('yngResult').textContent = (ad * ag / (ag + 12)).toFixed(1); }
